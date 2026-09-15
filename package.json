@@ -1,0 +1,26 @@
+{
+  "name": "aethera-commerce",
+  "version": "1.0.0",
+  "description": "A production-quality AI-powered e-commerce platform with an immersive 3D shopping experience",
+  "scripts": {
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev",
+    "build:client": "npm --prefix client run build",
+    "start:server": "npm --prefix server start",
+    "seed": "npm --prefix server run seed",
+    "seed:clear": "npm --prefix server run seed:clear",
+    "seed:admin": "npm --prefix server run seed:admin",
+    "test:auth": "npm --prefix server run test:auth",
+    "test:product": "npm --prefix server run test:product"
+  },
+  "keywords": [
+    "ecommerce",
+    "threejs",
+    "ai",
+    "mern",
+    "react",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC"
+}
