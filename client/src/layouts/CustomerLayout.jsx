@@ -32,7 +32,7 @@ export default function CustomerLayout() {
   }, [dispatch, isAuthenticated]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white antialiased">
+    <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-neutral-900 selection:bg-neutral-900 selection:text-white antialiased">
       <Navbar />
       <main className="flex-1">
         <Outlet />
@@ -41,4 +41,5 @@ export default function CustomerLayout() {
       <Footer />
     </div>
   );
+
 }

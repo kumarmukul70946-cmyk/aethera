@@ -1,56 +1,67 @@
 import React from "react";
 import HeroSection from "../components/home/HeroSection.jsx";
-import FeaturedProducts from "../components/home/FeaturedProducts.jsx";
 import CategoryShowcase from "../components/home/CategoryShowcase.jsx";
-import TrendingProducts from "../components/home/TrendingProducts.jsx";
-import ExperienceSection from "../components/home/ExperienceSection.jsx";
-import CTASection from "../components/home/CTASection.jsx";
-import RecommendedProducts from "../components/product/RecommendedProducts.jsx";
+import PromoBanners from "../components/home/PromoBanners.jsx";
+import FeaturedProducts from "../components/home/FeaturedProducts.jsx";
+import ThreeDimensionBanner from "../components/home/ThreeDimensionBanner.jsx";
+import WhyChooseSection from "../components/home/WhyChooseSection.jsx";
+import SeasonalBanners from "../components/home/SeasonalBanners.jsx";
+import PopularBrands from "../components/home/PopularBrands.jsx";
+import TestimonialsSection from "../components/home/TestimonialsSection.jsx";
+import AppDownloadSection from "../components/home/AppDownloadSection.jsx";
+import NewsletterSection from "../components/home/NewsletterSection.jsx";
 
 /**
- * Home Page (Part 11 — Immersive 3D Homepage & Part 13 — Recommendations)
+ * Home Page
  *
- * Architectural Composition:
- * 1. HeroSection — 3D interactive hero with progressive enhancement and device fallbacks
- * 2. FeaturedProducts — Curated staff-pick catalog items
- * 3. CategoryShowcase — Dynamic category cards linked to filtered listings
- * 4. TrendingProducts — High-converting, top-rated products from GET /api/products/trending
- * 5. RecommendedProducts — Personalized AI recommendations based on user interactions
- * 6. ExperienceSection — Differentiators (3D digital twins, 3D customization, AI preview)
- * 7. CTASection — Conversion banner and insider newsletter
- *
- * Notice: 3D logic, API logic, and UI components are strictly separated.
- * Each section is isolated so an individual API fault never crashes the page.
+ * Implements the complete Japandi/warm-light minimalist design matching the target mockup:
+ * 1. HeroSection — Headline, statistics, and high-end headphone lifestyle visual
+ * 2. CategoryShowcase — 8 circular/pill category cards
+ * 3. PromoBanners — iPhone 16 Pro and Streetwear Collection 2-column cards
+ * 4. FeaturedProducts — 6 flagship product cards with ratings, discounts, and quick cart action
+ * 5. ThreeDimensionBanner — "Bring Products to Life" 3D interactive highlight
+ * 6. WhyChooseSection — 4 feature pillars and interactive 360° sneaker preview
+ * 7. SeasonalBanners — Summer Essentials & Home and Living banners
+ * 8. PopularBrands — 8 clean brand logo cards
+ * 9. TestimonialsSection — Verified customer reviews
+ * 10. AppDownloadSection — Mobile app download banner with phone mockup
+ * 11. NewsletterSection — "Stay in the Loop" email subscription bar
  */
 export default function Home() {
   return (
-    <div className="space-y-20 sm:space-y-24 lg:space-y-32 pb-20 overflow-x-hidden">
-      {/* 1. Immersive 3D Hero */}
+    <div className="space-y-16 sm:space-y-20 lg:space-y-24 pb-20 overflow-x-hidden">
+      {/* 1. Hero Section */}
       <HeroSection />
 
-      {/* 2. Featured Products (Staff Picks) */}
-      <FeaturedProducts />
-
-      {/* 3. Category Showcase */}
+      {/* 2. Shop By Category */}
       <CategoryShowcase />
 
-      {/* 4. Trending Products (Top Sellers) */}
-      <TrendingProducts />
+      {/* 3. Promotional Banners (iPhone 16 Pro & Streetwear) */}
+      <PromoBanners />
 
-      {/* 5. Personalized Recommendations for Authenticated Users */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <RecommendedProducts
-          title="Recommended for You"
-          subtitle="Curated gear matching your browsing, cart, and purchase history"
-          limit={4}
-        />
-      </div>
+      {/* 4. Featured Products (6 items) */}
+      <FeaturedProducts />
 
-      {/* 6. 3D Experience Story & Differentiators */}
-      <ExperienceSection />
+      {/* 5. 3D Banner: Bring Products to Life */}
+      <ThreeDimensionBanner />
 
-      {/* 7. Conversion CTA & Insider Signup */}
-      <CTASection />
+      {/* 6. Why Choose Aethera & 360° Preview */}
+      <WhyChooseSection />
+
+      {/* 7. Seasonal Banners (Summer Essentials & Home Living) */}
+      <SeasonalBanners />
+
+      {/* 8. Popular Brands */}
+      <PopularBrands />
+
+      {/* 9. Customer Testimonials */}
+      <TestimonialsSection />
+
+      {/* 10. Mobile App Download */}
+      <AppDownloadSection />
+
+      {/* 11. Stay in the Loop Newsletter */}
+      <NewsletterSection />
     </div>
   );
 }

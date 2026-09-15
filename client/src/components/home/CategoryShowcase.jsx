@@ -1,128 +1,127 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { motion } from "framer-motion";
-import { fetchCategories } from "../../features/products/productSlice.js";
-import { selectCategories } from "../../features/products/productSelectors.js";
-import { CategoryGridSkeleton } from "./HomeSkeleton.jsx";
-import { CubeIcon, ArrowRightIcon, RefreshIcon } from "../common/Icons.jsx";
+import { ChevronLeftIcon, ChevronRightIcon } from "../common/Icons.jsx";
 
-/**
- * CategoryShowcase
- * Dynamic category cards fetched from the backend API.
- * Links to filtered catalog searches without full page reloads.
- */
+const CATEGORIES = [
+  {
+    name: "Electronics",
+    slug: "electronics",
+    image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300&auto=format&fit=crop&q=80"
+  },
+  {
+    name: "Fashion",
+    slug: "fashion",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=80"
+  },
+  {
+    name: "Beauty",
+    slug: "beauty",
+    image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=300&auto=format&fit=crop&q=80"
+  },
+  {
+    name: "Home & Living",
+    slug: "home",
+    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&auto=format&fit=crop&q=80"
+  },
+  {
+    name: "Gaming",
+    slug: "gaming",
+    image: "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=300&auto=format&fit=crop&q=80"
+  },
+  {
+    name: "Accessories",
+    slug: "accessories",
+    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80"
+  },
+  {
+    name: "Sports",
+    slug: "sports",
+    image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop&q=80"
+  },
+  {
+    name: "More",
+    slug: "all",
+    isMore: true
+  }
+];
+
 export default function CategoryShowcase() {
-  const dispatch = useDispatch();
-  const categories = useSelector(selectCategories);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const scrollRef = useRef(null);
 
-  const loadCategories = () => {
-    // Reuse existing categories in Redux if already loaded by CustomerLayout
-    if (categories && categories.length > 0) return;
-
-    setLoading(true);
-    setError(null);
-    dispatch(fetchCategories())
-      .unwrap()
-      .catch((err) => {
-        setError(err || "Unable to load product categories.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = direction === "left" ? -240 : 240;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
   };
 
-  useEffect(() => {
-    loadCategories();
-  }, [dispatch]);
-
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Section Header */}
-      <div className="flex items-center justify-between mb-8">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full bg-cyan-400" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400">
-              Department Domains
-            </span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            Browse by Category
+          <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">
+            Shop by Category
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight mt-0.5">
+            Find What You Love
           </h2>
         </div>
-        <Link
-          to="/products"
-          className="group text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition flex items-center gap-1.5"
-        >
-          <span>All Categories</span>
-          <ArrowRightIcon className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-        </Link>
-      </div>
 
-      {/* Loading Skeleton */}
-      {loading && (!categories || categories.length === 0) && (
-        <CategoryGridSkeleton count={8} />
-      )}
-
-      {/* Error Fallback */}
-      {error && (!categories || categories.length === 0) && (
-        <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 text-center space-y-3">
-          <p className="text-xs text-slate-400">{error}</p>
+        {/* Scroll Controls */}
+        <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={loadCategories}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 transition"
+            onClick={() => scroll("left")}
+            className="w-8 h-8 rounded-full border border-neutral-200 hover:border-neutral-900 flex items-center justify-center text-neutral-700 hover:text-black transition"
+            aria-label="Scroll left"
           >
-            <RefreshIcon className="w-3.5 h-3.5" />
-            <span>Retry Loading</span>
+            <ChevronLeftIcon className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => scroll("right")}
+            className="w-8 h-8 rounded-full border border-neutral-200 hover:border-neutral-900 flex items-center justify-center text-neutral-700 hover:text-black transition"
+            aria-label="Scroll right"
+          >
+            <ChevronRightIcon className="w-4 h-4" />
           </button>
         </div>
-      )}
+      </div>
 
-      {/* Category Grid */}
-      {categories && categories.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.5 }}
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
-        >
-          {categories.slice(0, 8).map((cat) => (
-            <Link
-              key={cat._id || cat.slug}
-              to={`/products?category=${encodeURIComponent(cat.slug || cat.name.toLowerCase())}`}
-              className="group relative bg-slate-900/40 hover:bg-slate-900/90 border border-slate-800/80 hover:border-indigo-500/50 rounded-2xl p-5 transition flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 active:scale-[0.99]"
-            >
-              {/* Card Top Icon & Count */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-500/20 transition duration-300">
-                  <CubeIcon className="w-5 h-5" />
+      {/* Categories Row */}
+      <div
+        ref={scrollRef}
+        className="flex items-center gap-3.5 overflow-x-auto pb-4 scrollbar-none snap-x"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {CATEGORIES.map((cat, idx) => (
+          <Link
+            key={idx}
+            to={cat.isMore ? "/products" : `/products?category=${cat.slug}`}
+            className="shrink-0 w-32 sm:w-36 group"
+          >
+            <div className="h-28 rounded-2xl bg-[#F4F4F5] border border-neutral-200/50 p-3 flex items-center justify-center group-hover:bg-neutral-200/80 transition-all duration-300 shadow-2xs group-hover:shadow-xs overflow-hidden">
+              {cat.isMore ? (
+                <div className="grid grid-cols-2 gap-1.5 p-2">
+                  <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
+                  <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
+                  <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
+                  <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
                 </div>
-                {typeof cat.productCount === "number" && (
-                  <span className="text-[11px] font-semibold text-slate-400 bg-slate-950/80 px-2.5 py-0.5 rounded-full border border-slate-800">
-                    {cat.productCount} items
-                  </span>
-                )}
-              </div>
-
-              {/* Card Text Information */}
-              <div>
-                <h3 className="font-semibold text-sm sm:text-base text-slate-200 group-hover:text-white transition flex items-center justify-between">
-                  <span>{cat.name}</span>
-                  <ArrowRightIcon className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition" />
-                </h3>
-                <p className="text-xs text-slate-400 line-clamp-1 mt-1">
-                  {cat.description || "Discover premium products"}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </motion.div>
-      )}
+              ) : (
+                <img
+                  src={cat.image}
+                  alt={cat.name}
+                  className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition duration-300"
+                />
+              )}
+            </div>
+            <p className="text-xs font-semibold text-center text-neutral-800 mt-2.5 group-hover:text-black transition">
+              {cat.name}
+            </p>
+          </Link>
+        ))}
+      </div>
     </section>
   );
 }
