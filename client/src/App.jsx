@@ -49,6 +49,7 @@ export default function App() {
                 <Route path="/product/:slug" element={<ProductDetails />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/3d-demo" element={<ThreeDemo />} />
+                <Route path="/3d-lab" element={<ThreeDemo />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 

@@ -4,22 +4,17 @@ import { Environment, Lightformer } from "@react-three/drei";
 import LightingSetup from "./LightingSetup.jsx";
 import Platform from "./Platform.jsx";
 import RotatingCube from "./RotatingCube.jsx";
+import ProductModel from "./ProductModel.jsx";
 import Controls from "./Controls.jsx";
 import CanvasErrorBoundary from "../utils/CanvasErrorBoundary.jsx";
 
 /**
  * BasicScene — The root 3D Canvas environment for Aethera Commerce.
- *
- * Configures the Three.js WebGL canvas pipeline:
- * - Camera: Perspective projection with human-eye 45° FOV placed at [3.2, 2.4, 4.2].
- * - Shadows: Real-time PCF soft shadow maps enabled.
- * - DPR (Device Pixel Ratio): Clamped to [1, 2] for crisp Retina rendering without GPU strain.
- * - Environment: Local procedural reflection map providing realistic PBR metallic sheen without external HDR downloads.
  */
 export const BasicScene = forwardRef(function BasicScene(
   {
     // Cube material & geometry props
-    cubeColor = "#6366f1",
+    cubeColor = "#171717",
     roughness = 0.25,
     metalness = 0.75,
     wireframe = false,
@@ -28,10 +23,13 @@ export const BasicScene = forwardRef(function BasicScene(
     // Scene lighting preset
     lightingPreset = "studio",
     // Platform props
-    platformColor = "#1e293b",
+    platformColor = "#EAE6E1",
+    accentColor = "#D5CFCA",
     // Controls props
     autoOrbit = false,
-    controlsRef = null
+    controlsRef = null,
+    // Optional GLB model URL
+    modelUrl = null
   },
   ref
 ) {
@@ -88,18 +86,22 @@ export const BasicScene = forwardRef(function BasicScene(
             </Environment>
 
             {/* 3. Pedestal Platform (Shadow Receiver) */}
-            <Platform color={platformColor} />
+            <Platform color={platformColor} accentColor={accentColor} />
 
-            {/* 4. Interactive Demonstration Mesh */}
-            <RotatingCube
-              ref={ref}
-              color={cubeColor}
-              roughness={roughness}
-              metalness={metalness}
-              wireframe={wireframe}
-              isRotating={isRotating}
-              rotationSpeed={rotationSpeed}
-            />
+            {/* 4. Interactive Demonstration Mesh or GLB Model */}
+            {modelUrl ? (
+              <ProductModel modelUrl={modelUrl} targetSize={2.5} />
+            ) : (
+              <RotatingCube
+                ref={ref}
+                color={cubeColor}
+                roughness={roughness}
+                metalness={metalness}
+                wireframe={wireframe}
+                isRotating={isRotating}
+                rotationSpeed={rotationSpeed}
+              />
+            )}
 
             {/* 5. User Navigation Orbit Controls */}
             <Controls

@@ -12,9 +12,10 @@ export default function Platform({
   radius = 3.2,
   height = 0.25,
   position = [0, -0.125, 0],
-  color = "#1e293b",
-  roughness = 0.5,
-  metalness = 0.2
+  color = "#EAE6E1",
+  roughness = 0.6,
+  metalness = 0.1,
+  accentColor = "#D5CFCA"
 }) {
   return (
     <group position={position} name="StudioPlatform">
@@ -31,7 +32,7 @@ export default function Platform({
       {/* 2. Accent Ring / Bevel Trim around the pedestal rim */}
       <mesh position={[0, height / 2 + 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[radius - 0.08, radius, 48]} />
-        <meshBasicMaterial color="#6366f1" transparent opacity={0.35} />
+        <meshBasicMaterial color={accentColor} transparent opacity={0.5} />
       </mesh>
 
       {/* 3. Infinite Ground Plane for Ambient Drop Shadows */}
