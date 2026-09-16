@@ -50,26 +50,29 @@ export default function AddressFormModal({
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl z-10 space-y-6">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-          <h3 className="text-lg font-bold text-white">
-            {initialData ? "Edit Shipping Address" : "Add Shipping Address"}
-          </h3>
+      <div className="relative w-full max-w-lg bg-white border border-neutral-200/80 rounded-3xl p-6 sm:p-8 shadow-2xl z-10 space-y-6">
+        <div className="flex items-center justify-between pb-4 border-b border-neutral-100">
+          <div>
+            <span className="text-[10px] font-semibold tracking-widest uppercase text-neutral-400">Destination</span>
+            <h3 className="text-xl font-serif font-normal text-neutral-900 mt-0.5">
+              {initialData ? "Edit Shipping Address" : "Add Shipping Address"}
+            </h3>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white"
+            className="p-1.5 rounded-full text-neutral-400 hover:text-neutral-800 hover:bg-neutral-100 transition"
           >
             <CloseIcon className="w-5 h-5" />
           </button>
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
+          <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
             {error}
           </div>
         )}
@@ -77,7 +80,7 @@ export default function AddressFormModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                 Full Name *
               </label>
               <input
@@ -87,12 +90,12 @@ export default function AddressFormModal({
                 value={formData.fullName}
                 onChange={handleChange}
                 placeholder="Jane Doe"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-[#FAF9F6] border border-neutral-200 rounded-xl px-3.5 py-2.5 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                 Phone Number *
               </label>
               <input
@@ -102,13 +105,13 @@ export default function AddressFormModal({
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="+91 9876543210"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-[#FAF9F6] border border-neutral-200 rounded-xl px-3.5 py-2.5 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-medium text-neutral-700 mb-1.5">
               Address Line (House/Street/Apartment) *
             </label>
             <input
@@ -118,13 +121,13 @@ export default function AddressFormModal({
               value={formData.addressLine}
               onChange={handleChange}
               placeholder="Flat 402, Quantum Towers"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-[#FAF9F6] border border-neutral-200 rounded-xl px-3.5 py-2.5 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
             />
           </div>
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                 City *
               </label>
               <input
@@ -134,12 +137,12 @@ export default function AddressFormModal({
                 value={formData.city}
                 onChange={handleChange}
                 placeholder="Bengaluru"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-[#FAF9F6] border border-neutral-200 rounded-xl px-3.5 py-2.5 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                 State *
               </label>
               <input
@@ -149,12 +152,12 @@ export default function AddressFormModal({
                 value={formData.state}
                 onChange={handleChange}
                 placeholder="Karnataka"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-[#FAF9F6] border border-neutral-200 rounded-xl px-3.5 py-2.5 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                 PIN Code *
               </label>
               <input
@@ -164,7 +167,7 @@ export default function AddressFormModal({
                 value={formData.postalCode}
                 onChange={handleChange}
                 placeholder="560001"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-[#FAF9F6] border border-neutral-200 rounded-xl px-3.5 py-2.5 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
               />
             </div>
           </div>
@@ -176,25 +179,25 @@ export default function AddressFormModal({
               name="isDefault"
               checked={formData.isDefault}
               onChange={handleChange}
-              className="rounded bg-slate-950 border-slate-800 text-indigo-600 focus:ring-indigo-500"
+              className="rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900 w-4 h-4"
             />
-            <label htmlFor="isDefault" className="text-xs text-slate-300">
+            <label htmlFor="isDefault" className="text-xs text-neutral-600 font-medium">
               Set as my default shipping address
             </label>
           </div>
 
-          <div className="pt-4 border-t border-slate-800 flex justify-end gap-3">
+          <div className="pt-4 border-t border-neutral-100 flex justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-slate-800 text-xs font-semibold text-slate-300 hover:bg-slate-800"
+              className="px-5 py-2.5 rounded-full border border-neutral-200 text-xs font-semibold text-neutral-600 hover:bg-neutral-50 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition shadow-lg shadow-indigo-600/20"
+              className="px-6 py-2.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-xs font-semibold uppercase tracking-wider text-white transition shadow-sm disabled:opacity-50"
             >
               {loading ? "Saving..." : "Save Address"}
             </button>

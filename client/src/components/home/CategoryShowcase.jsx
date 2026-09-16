@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { ChevronLeftIcon, ChevronRightIcon } from "../common/Icons.jsx";
 
 const CATEGORIES = [
@@ -95,31 +96,40 @@ export default function CategoryShowcase() {
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {CATEGORIES.map((cat, idx) => (
-          <Link
+          <motion.div
             key={idx}
-            to={cat.isMore ? "/products" : `/products?category=${cat.slug}`}
+            whileHover={{ y: -4 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="shrink-0 w-32 sm:w-36 group"
           >
-            <div className="h-28 rounded-2xl bg-[#F4F4F5] border border-neutral-200/50 p-3 flex items-center justify-center group-hover:bg-neutral-200/80 transition-all duration-300 shadow-2xs group-hover:shadow-xs overflow-hidden">
-              {cat.isMore ? (
-                <div className="grid grid-cols-2 gap-1.5 p-2">
-                  <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
-                  <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
-                  <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
-                  <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
-                </div>
-              ) : (
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition duration-300"
-                />
-              )}
-            </div>
-            <p className="text-xs font-semibold text-center text-neutral-800 mt-2.5 group-hover:text-black transition">
-              {cat.name}
-            </p>
-          </Link>
+            <Link
+              to={cat.isMore ? "/products" : `/products?category=${cat.slug}`}
+              className="block w-full h-full"
+            >
+              <div className="h-28 rounded-2xl bg-[#F4F4F5] group-hover:bg-white/90 group-hover:backdrop-blur-xs border border-neutral-200/50 group-hover:border-neutral-300 p-3 flex items-center justify-center transition-all duration-300 shadow-2xs group-hover:shadow-md overflow-hidden relative">
+                {/* Subtle glass highlight overlay on interaction */}
+                <div className="absolute inset-0 bg-gradient-to-t from-white/0 via-white/10 to-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                {cat.isMore ? (
+                  <div className="grid grid-cols-2 gap-1.5 p-2">
+                    <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
+                    <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
+                    <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
+                    <div className="w-3.5 h-3.5 rounded bg-neutral-400 group-hover:bg-neutral-800 transition" />
+                  </div>
+                ) : (
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                  />
+                )}
+              </div>
+              <p className="text-xs font-semibold text-center text-neutral-800 mt-2.5 group-hover:text-black transition">
+                {cat.name}
+              </p>
+            </Link>
+          </motion.div>
         ))}
       </div>
     </section>

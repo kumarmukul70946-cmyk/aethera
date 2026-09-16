@@ -42,93 +42,80 @@ export default function ReviewItem({
   const userInitial = userName.charAt(0).toUpperCase();
 
   return (
-    <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 space-y-3.5 hover:border-slate-700/80 transition shadow-sm">
+    <div className="p-6 rounded-3xl bg-white border border-neutral-200/80 space-y-3.5 shadow-xs hover:shadow-sm transition text-neutral-900">
       {/* Header: User & Rating */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           {/* Avatar Bubble */}
-          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white font-bold text-sm flex items-center justify-center shadow-md">
+          <div className="w-10 h-10 rounded-full bg-neutral-100 text-neutral-800 font-bold text-sm flex items-center justify-center border border-neutral-200 shadow-xs">
             {userInitial}
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-slate-200">
+              <span className="text-sm font-bold text-neutral-900">
                 {userName}
               </span>
               {review.verifiedPurchase && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">
-                  <ShieldCheckIcon className="w-3 h-3" />
-                  <span>Verified Purchase</span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-bold">
+                  <ShieldCheckIcon className="w-3 h-3 text-emerald-600" />
+                  <span>Verified Buyer</span>
                 </span>
               )}
             </div>
-
-            <div className="flex items-center gap-2.5 mt-1">
-              <RatingStars rating={review.rating} size="sm" />
-              <span className="text-xs text-slate-500">{formattedDate}</span>
-            </div>
+            <span className="text-[11px] text-neutral-400 font-light">{formattedDate}</span>
           </div>
+        </div>
+
+        {/* Rating Stars */}
+        <RatingStars rating={review.rating} size="sm" />
+      </div>
+
+      {/* Review Title & Body */}
+      {review.title && (
+        <h5 className="font-bold text-sm text-neutral-900">{review.title}</h5>
+      )}
+      <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed font-light">
+        {review.comment}
+      </p>
+
+      {/* Actions & Helpful Count */}
+      <div className="pt-2 flex items-center justify-between gap-4 text-xs border-t border-neutral-100">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleHelpfulClick}
+            disabled={voting}
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-semibold text-[11px] transition"
+          >
+            <span>👍 Helpful</span>
+            <span>({review.helpfulCount || 0})</span>
+          </button>
+          {voteError && (
+            <span className="text-rose-600 text-[11px]">{voteError}</span>
+          )}
         </div>
 
         {/* Owner Controls */}
         {isOwner && (
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => onEdit(review)}
-              className="text-slate-400 hover:text-indigo-400 font-medium transition"
+              className="text-neutral-500 hover:text-neutral-900 font-medium text-xs"
             >
               Edit
             </button>
-            <span className="text-slate-700">|</span>
+            <span className="text-neutral-300">•</span>
             <button
               type="button"
               onClick={() => onDelete(review._id)}
-              className="text-slate-400 hover:text-rose-400 font-medium transition"
+              className="text-rose-600 hover:text-rose-800 font-medium text-xs"
             >
               Delete
             </button>
           </div>
         )}
-      </div>
-
-      {/* Review Comment */}
-      <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
-        {review.comment}
-      </p>
-
-      {/* Footer: Helpful Vote Action */}
-      <div className="pt-2 border-t border-slate-800/50 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handleHelpfulClick}
-            disabled={voting}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 transition font-medium text-xs disabled:opacity-50"
-          >
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-              />
-            </svg>
-            <span>Helpful ({review.helpfulCount || 0})</span>
-          </button>
-
-          {voteError && (
-            <span className="text-[11px] text-amber-400 animate-in fade-in">
-              {voteError}
-            </span>
-          )}
-        </div>
       </div>
     </div>
   );

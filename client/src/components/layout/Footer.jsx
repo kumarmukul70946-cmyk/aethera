@@ -98,6 +98,16 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/categories" className="hover:text-black transition">
+                  Categories Directory
+                </Link>
+              </li>
+              <li>
+                <Link to="/deals" className="hover:text-black transition">
+                  Offers & Deals
+                </Link>
+              </li>
+              <li>
                 <Link to="/products?sort=newest" className="hover:text-black transition">
                   New Arrivals
                 </Link>
@@ -105,11 +115,6 @@ export default function Footer() {
               <li>
                 <Link to="/products?sort=rating" className="hover:text-black transition">
                   Best Sellers
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?discount=true" className="hover:text-black transition">
-                  Deals
                 </Link>
               </li>
             </ul>

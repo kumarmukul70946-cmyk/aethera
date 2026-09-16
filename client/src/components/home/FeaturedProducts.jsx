@@ -87,6 +87,29 @@ export default function FeaturedProducts() {
   const { isAuthenticated } = useAuth();
   const wishlistItems = useSelector(selectWishlistItems) || [];
   const [addedIds, setAddedIds] = useState({});
+  const [tiltMap, setTiltMap] = useState({});
+
+  const handleCardMouseMove = (id, e) => {
+    if (
+      typeof window !== "undefined" &&
+      (window.matchMedia("(pointer: coarse)").matches ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    ) {
+      return;
+    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((centerY - y) / centerY) * 3;
+    const rotateY = ((x - centerX) / centerX) * 5;
+    setTiltMap((prev) => ({ ...prev, [id]: { x: rotateX, y: rotateY } }));
+  };
+
+  const handleCardMouseLeave = (id) => {
+    setTiltMap((prev) => ({ ...prev, [id]: { x: 0, y: 0 } }));
+  };
 
   const handleAddToCart = (item) => {
     dispatch(addItemToCart({ productId: item.id, quantity: 1 }));
@@ -122,26 +145,39 @@ export default function FeaturedProducts() {
         </div>
         <Link
           to="/products"
-          className="text-xs font-semibold text-neutral-900 hover:text-neutral-600 transition flex items-center gap-1"
+          className="group text-xs font-semibold text-neutral-900 hover:text-neutral-600 transition flex items-center gap-1.5"
         >
           <span>View All Products</span>
-          <span className="text-sm">→</span>
+          <span className="text-sm btn-arrow">→</span>
         </Link>
       </div>
 
-      {/* 6 Products Grid */}
+      {/* 6 Products Grid with Staggered Scroll Reveal & 3D Tilt */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-        {CURATED_FEATURED.map((product) => {
+        {CURATED_FEATURED.map((product, idx) => {
           const wishlisted = isWishlisted(product.id);
           const isAdded = addedIds[product.id];
+          const cardTilt = tiltMap[product.id] || { x: 0, y: 0 };
 
           return (
-            <motion.div
-              key={product.id}
-              whileHover={{ y: -3 }}
-              transition={{ duration: 0.2 }}
-              className="group relative bg-white rounded-2xl p-3 sm:p-3.5 border border-neutral-100 shadow-sm hover:shadow-md hover:border-neutral-200 transition flex flex-col justify-between"
-            >
+            <div key={product.id} style={{ perspective: 1000 }} className="h-full">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{
+                  opacity: { duration: 0.7, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] },
+                  y: { duration: 0.7, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }
+                }}
+                animate={{
+                  rotateX: cardTilt.x,
+                  rotateY: cardTilt.y
+                }}
+                onMouseMove={(e) => handleCardMouseMove(product.id, e)}
+                onMouseLeave={() => handleCardMouseLeave(product.id)}
+                style={{ transformStyle: "preserve-3d" }}
+                className="group relative h-full bg-white hover:bg-white/85 hover:backdrop-blur-md rounded-2xl p-3 sm:p-3.5 border border-neutral-100 hover:border-neutral-300 shadow-sm hover:shadow-lg transition-colors duration-300 flex flex-col justify-between"
+              >
               {/* Wishlist Button Top Right */}
               <button
                 type="button"
@@ -152,9 +188,13 @@ export default function FeaturedProducts() {
                 <HeartIcon className={`w-3.5 h-3.5 ${wishlisted ? "fill-rose-500 text-rose-500" : ""}`} />
               </button>
 
-              {/* Product Image */}
+              {/* Product Image with depth movement */}
               <Link
                 to={`/products?search=${encodeURIComponent(product.name)}`}
+                style={{
+                  transform: `translate3d(${cardTilt.y * 1.2}px, ${-cardTilt.x * 1.2}px, 12px)`,
+                  transition: "transform 150ms ease-out"
+                }}
                 className="w-full aspect-square rounded-xl overflow-hidden bg-neutral-50 flex items-center justify-center mb-3"
               >
                 <img
@@ -210,6 +250,7 @@ export default function FeaturedProducts() {
                 </button>
               </div>
             </motion.div>
+            </div>
           );
         })}
       </div>

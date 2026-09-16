@@ -9,10 +9,10 @@ export default function ReviewSummary({
   const { averageRating = 0, totalReviews = 0, distribution = {} } = summary;
 
   return (
-    <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+    <div className="p-6 sm:p-8 rounded-3xl bg-white border border-neutral-200/80 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-6 items-center text-neutral-900">
       {/* Left: Overall Score */}
-      <div className="md:col-span-5 flex flex-col items-center justify-center text-center p-4 border-b md:border-b-0 md:border-r border-slate-800/80">
-        <span className="text-5xl font-black text-white tracking-tight">
+      <div className="md:col-span-5 flex flex-col items-center justify-center text-center p-4 border-b md:border-b-0 md:border-r border-neutral-100">
+        <span className="text-5xl font-bold text-neutral-900 tracking-tight">
           {averageRating > 0 ? averageRating.toFixed(1) : "0.0"}
         </span>
 
@@ -20,7 +20,7 @@ export default function ReviewSummary({
           <RatingStars rating={averageRating} size="md" />
         </div>
 
-        <p className="text-xs text-slate-400 font-medium">
+        <p className="text-xs text-neutral-500 font-light">
           Based on {totalReviews} customer {totalReviews === 1 ? "review" : "reviews"}
         </p>
 
@@ -28,7 +28,7 @@ export default function ReviewSummary({
           <button
             type="button"
             onClick={() => onSelectRating(null)}
-            className="mt-3 px-3 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 text-xs font-semibold border border-indigo-500/30 transition"
+            className="mt-3 px-3 py-1 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold border border-neutral-200 transition"
           >
             Filtered by {selectedRating}★ • Show all
           </button>
@@ -47,33 +47,28 @@ export default function ReviewSummary({
               key={stars}
               type="button"
               onClick={() => onSelectRating(isSelected ? null : stars)}
-              className={`w-full flex items-center gap-3 p-1.5 rounded-xl text-left transition group ${
+              className={`w-full flex items-center gap-3 p-1.5 rounded-xl text-left transition ${
                 isSelected
-                  ? "bg-indigo-500/15 ring-1 ring-indigo-500/50"
-                  : "hover:bg-slate-800/50"
+                  ? "bg-neutral-100 ring-1 ring-neutral-900"
+                  : "hover:bg-neutral-50"
               }`}
             >
-              <span className="w-12 text-xs font-semibold text-slate-300 flex items-center gap-1">
+              <span className="w-10 text-xs font-semibold text-neutral-700 flex items-center gap-1">
                 <span>{stars}</span>
                 <span className="text-amber-400 text-[10px]">★</span>
               </span>
 
-              {/* Progress Bar Container */}
-              <div className="flex-1 h-2.5 rounded-full bg-slate-950 overflow-hidden border border-slate-800">
+              {/* Bar */}
+              <div className="flex-1 h-2 bg-neutral-100 rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    isSelected
-                      ? "bg-indigo-500"
-                      : "bg-amber-400/90 group-hover:bg-amber-400"
-                  }`}
+                  className="h-full bg-neutral-900 rounded-full transition-all duration-500"
                   style={{ width: `${percentage}%` }}
                 />
               </div>
 
-              <div className="w-14 text-right flex items-center justify-end gap-1.5 text-xs text-slate-400">
-                <span className="font-mono text-[11px] text-slate-500">{percentage}%</span>
-                <span className="font-semibold text-slate-300">({count})</span>
-              </div>
+              <span className="w-12 text-right text-xs text-neutral-400 font-mono">
+                {count} ({percentage}%)
+              </span>
             </button>
           );
         })}

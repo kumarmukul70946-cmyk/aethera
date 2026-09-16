@@ -55,7 +55,7 @@ export default function ChatInput({ onSend, isLoading, disabled = false }) {
   };
 
   return (
-    <div className="p-3 border-t border-slate-800 bg-slate-900/90 backdrop-blur-md">
+    <div className="p-3.5 border-t border-neutral-100 bg-white">
       {/* Quick Suggestion Chips */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-2 no-scrollbar">
         {SUGGESTIONS.map((chip, idx) => (
@@ -64,7 +64,7 @@ export default function ChatInput({ onSend, isLoading, disabled = false }) {
             type="button"
             disabled={isLoading || disabled}
             onClick={() => handleChipClick(chip)}
-            className="text-[11px] px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-cyan-300 border border-slate-700/60 whitespace-nowrap transition-colors flex-shrink-0 disabled:opacity-50"
+            className="text-[11px] px-3 py-1 rounded-full bg-[#FAF9F6] hover:bg-neutral-100 text-neutral-600 hover:text-neutral-900 border border-neutral-200 whitespace-nowrap transition-colors flex-shrink-0 disabled:opacity-40"
           >
             {chip}
           </button>
@@ -84,12 +84,12 @@ export default function ChatInput({ onSend, isLoading, disabled = false }) {
             disabled={isLoading || disabled}
             placeholder={
               disabled
-                ? "Please sign in to ask Aethera AI"
-                : "Ask about products, prices, stock..."
+                ? "Please sign in to ask Aethera Concierge"
+                : "Ask about materials, dimensions, verified reviews..."
             }
-            className="w-full resize-none rounded-xl bg-slate-800/80 border border-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-sm text-slate-100 placeholder-slate-400 py-2.5 pl-3.5 pr-12 outline-none transition-all duration-200 max-h-32 disabled:bg-slate-900 disabled:opacity-60"
+            className="w-full resize-none rounded-2xl bg-[#FAF9F6] border border-neutral-200 focus:border-neutral-900 focus:bg-white text-xs text-neutral-900 placeholder-neutral-400 py-3 pl-4 pr-12 outline-none transition-all duration-200 max-h-32 disabled:bg-neutral-100 disabled:opacity-60"
           />
-          <div className="absolute right-3 bottom-2 text-[10px] text-slate-500 pointer-events-none">
+          <div className="absolute right-3.5 bottom-2.5 text-[10px] text-neutral-400 pointer-events-none">
             {text.length > 800 && `${1000 - text.length}`}
           </div>
         </div>
@@ -98,10 +98,10 @@ export default function ChatInput({ onSend, isLoading, disabled = false }) {
           type="submit"
           disabled={!text.trim() || isLoading || disabled}
           aria-label="Send query"
-          className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-cyan-500/20 disabled:opacity-40 disabled:pointer-events-none transition-all flex-shrink-0"
+          className="w-10 h-10 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white flex items-center justify-center shadow-sm disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed transition-all flex-shrink-0"
         >
           <svg
-            className="w-5 h-5 translate-x-0.5"
+            className="w-4 h-4 translate-x-0.5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

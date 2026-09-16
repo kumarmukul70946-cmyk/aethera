@@ -18,14 +18,15 @@ const Checkout = lazy(() => import("./pages/Checkout.jsx"));
 const OrderSuccess = lazy(() => import("./pages/OrderSuccess.jsx"));
 const Orders = lazy(() => import("./pages/Orders.jsx"));
 const OrderDetails = lazy(() => import("./pages/OrderDetails.jsx"));
-const ThreeDemo = lazy(() => import("./pages/ThreeDemo.jsx"));
+const Categories = lazy(() => import("./pages/Categories.jsx"));
+const Deals = lazy(() => import("./pages/Deals.jsx"));
 import ProtectedRoute from "./components/common/ProtectedRoute.jsx";
 
 // Minimal fallback loader during route transitions
 function RouteLoadingFallback() {
   return (
     <div className="min-h-[50vh] flex items-center justify-center">
-      <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+      <div className="w-8 h-8 rounded-full border-2 border-neutral-900 border-t-transparent animate-spin" />
     </div>
   );
 }
@@ -45,11 +46,13 @@ export default function App() {
               <Route element={<CustomerLayout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/deals" element={<Deals />} />
                 <Route path="/products/:id" element={<ProductDetails />} />
                 <Route path="/product/:slug" element={<ProductDetails />} />
                 <Route path="/search" element={<Search />} />
-                <Route path="/3d-demo" element={<ThreeDemo />} />
-                <Route path="/3d-lab" element={<ThreeDemo />} />
+                <Route path="/3d-demo" element={<Navigate to="/products" replace />} />
+                <Route path="/3d-lab" element={<Navigate to="/products" replace />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 

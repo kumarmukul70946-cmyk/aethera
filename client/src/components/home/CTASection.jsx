@@ -59,11 +59,10 @@ export default function CTASection() {
               </Link>
 
               <Link
-                to="/3d-demo"
+                to="/deals"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white font-semibold text-sm transition border border-slate-700/80 hover:scale-[1.02] active:scale-[0.99]"
               >
-                <CubeIcon className="w-4 h-4 text-indigo-400" />
-                <span>Visit 3D Studio</span>
+                <span>Browse Deals</span>
               </Link>
             </div>
           </div>

@@ -2,7 +2,7 @@ import React from "react";
 import { StarIcon, CloseIcon, RotateCcwIcon } from "../common/Icons.jsx";
 
 /**
- * Filter Sidebar & Mobile Drawer Component.
+ * Filter Sidebar & Mobile Drawer Component — Warm-light Japandi aesthetic.
  */
 export default function ProductFilters({
   categories = [],
@@ -13,6 +13,7 @@ export default function ProductFilters({
   minPrice = "",
   maxPrice = "",
   selectedRating = "",
+  selectedDiscount = "",
   onChange,
   onReset,
   isOpenMobile = false,
@@ -21,31 +22,55 @@ export default function ProductFilters({
   const content = (
     <div className="space-y-6">
       {/* Header & Reset */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-        <h3 className="font-bold text-slate-100 text-base">Filter Catalog</h3>
+      <div className="flex items-center justify-between pb-4 border-b border-neutral-100">
+        <h3 className="font-bold text-neutral-900 text-base">Filter Catalog</h3>
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-500 hover:text-neutral-900 transition cursor-pointer"
         >
           <RotateCcwIcon className="w-3.5 h-3.5" />
           Reset All
         </button>
       </div>
 
+      {/* Special Offers / Deals */}
+      <div className="pb-2">
+        <h4 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-2">
+          Promotions
+        </h4>
+        <button
+          type="button"
+          onClick={() => onChange("discount", selectedDiscount ? "" : "true")}
+          className={`w-full text-left px-3 py-2 rounded-xl text-xs sm:text-sm transition flex items-center justify-between cursor-pointer ${
+            selectedDiscount
+              ? "bg-amber-50 text-amber-950 border border-amber-300 font-semibold shadow-xs"
+              : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 border border-neutral-200/60"
+          }`}
+        >
+          <span className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${selectedDiscount ? "bg-amber-500 ring-2 ring-amber-300" : "bg-neutral-300"}`} />
+            Deals & Offers Only
+          </span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-200/60 text-amber-900 font-bold uppercase tracking-wider">
+            Sale
+          </span>
+        </button>
+      </div>
+
       {/* Categories Filter */}
       <div>
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+        <h4 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-3">
           Category
         </h4>
         <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
           <button
             type="button"
             onClick={() => onChange("category", "")}
-            className={`w-full text-left px-3 py-1.5 rounded-xl text-sm transition flex items-center justify-between ${
+            className={`w-full text-left px-3 py-1.5 rounded-xl text-xs sm:text-sm transition flex items-center justify-between ${
               !selectedCategory
-                ? "bg-indigo-600/15 text-indigo-400 font-semibold"
-                : "text-slate-400 hover:bg-slate-900 hover:text-slate-200"
+                ? "bg-neutral-900 text-white font-semibold shadow-xs"
+                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
             }`}
           >
             <span>All Categories</span>
@@ -59,15 +84,15 @@ export default function ProductFilters({
                 key={cat._id}
                 type="button"
                 onClick={() => onChange("category", cat.slug)}
-                className={`w-full text-left px-3 py-1.5 rounded-xl text-sm transition flex items-center justify-between ${
+                className={`w-full text-left px-3 py-1.5 rounded-xl text-xs sm:text-sm transition flex items-center justify-between ${
                   isSelected
-                    ? "bg-indigo-600/15 text-indigo-400 font-semibold"
-                    : "text-slate-400 hover:bg-slate-900 hover:text-slate-200"
+                    ? "bg-neutral-900 text-white font-semibold shadow-xs"
+                    : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                 }`}
               >
                 <span className="truncate">{cat.name}</span>
                 {typeof cat.productCount === "number" && (
-                  <span className="text-[11px] text-slate-500 ml-2">
+                  <span className={`text-[10px] ml-2 ${isSelected ? "text-neutral-300" : "text-neutral-400"}`}>
                     {cat.productCount}
                   </span>
                 )}
@@ -79,18 +104,18 @@ export default function ProductFilters({
 
       {/* Brands Filter */}
       {brands.length > 0 && (
-        <div className="pt-4 border-t border-slate-800/80">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+        <div className="pt-4 border-t border-neutral-100">
+          <h4 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-3">
             Brand
           </h4>
           <div className="space-y-1 max-h-44 overflow-y-auto pr-1">
             <button
               type="button"
               onClick={() => onChange("brand", "")}
-              className={`w-full text-left px-3 py-1.5 rounded-xl text-sm transition ${
+              className={`w-full text-left px-3 py-1.5 rounded-xl text-xs sm:text-sm transition ${
                 !selectedBrand
-                  ? "bg-indigo-600/15 text-indigo-400 font-semibold"
-                  : "text-slate-400 hover:bg-slate-900 hover:text-slate-200"
+                  ? "bg-neutral-900 text-white font-semibold shadow-xs"
+                  : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
               }`}
             >
               All Brands
@@ -103,10 +128,10 @@ export default function ProductFilters({
                   key={brand}
                   type="button"
                   onClick={() => onChange("brand", brand)}
-                  className={`w-full text-left px-3 py-1.5 rounded-xl text-sm transition flex items-center justify-between ${
+                  className={`w-full text-left px-3 py-1.5 rounded-xl text-xs sm:text-sm transition flex items-center justify-between ${
                     isSelected
-                      ? "bg-indigo-600/15 text-indigo-400 font-semibold"
-                      : "text-slate-400 hover:bg-slate-900 hover:text-slate-200"
+                      ? "bg-neutral-900 text-white font-semibold shadow-xs"
+                      : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                   }`}
                 >
                   <span className="truncate">{brand}</span>
@@ -118,8 +143,8 @@ export default function ProductFilters({
       )}
 
       {/* Price Range Filter */}
-      <div className="pt-4 border-t border-slate-800/80">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+      <div className="pt-4 border-t border-neutral-100">
+        <h4 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-3">
           Price Range (₹)
         </h4>
         <div className="flex items-center gap-2">
@@ -131,10 +156,10 @@ export default function ProductFilters({
               placeholder="Min"
               value={minPrice}
               onChange={(e) => onChange("minPrice", e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-1.5 text-xs text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
             />
           </div>
-          <span className="text-slate-600 text-xs">-</span>
+          <span className="text-neutral-400 text-xs">-</span>
           <div className="flex-1">
             <label htmlFor="max-price-input" className="sr-only">Max Price</label>
             <input
@@ -143,15 +168,15 @@ export default function ProductFilters({
               placeholder="Max"
               value={maxPrice}
               onChange={(e) => onChange("maxPrice", e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-1.5 text-xs text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
             />
           </div>
         </div>
       </div>
 
       {/* Minimum Rating Filter */}
-      <div className="pt-4 border-t border-slate-800/80">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+      <div className="pt-4 border-t border-neutral-100">
+        <h4 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-3">
           Customer Rating
         </h4>
         <div className="space-y-1.5">
@@ -164,21 +189,21 @@ export default function ProductFilters({
                 onClick={() =>
                   onChange("rating", isSelected ? "" : stars.toString())
                 }
-                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-sm transition ${
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-xs sm:text-sm transition ${
                   isSelected
-                    ? "bg-indigo-600/15 text-indigo-400 font-semibold"
-                    : "text-slate-400 hover:bg-slate-900 hover:text-slate-200"
+                    ? "bg-neutral-900 text-white font-semibold shadow-xs"
+                    : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                 }`}
               >
-                <div className="flex items-center gap-1 text-amber-400">
+                <div className="flex items-center gap-1">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <StarIcon
                       key={i}
-                      className="w-3.5 h-3.5"
+                      className={`w-3.5 h-3.5 ${i < stars ? "fill-amber-400 text-amber-400" : isSelected ? "text-neutral-600" : "text-neutral-300"}`}
                       filled={i < stars}
                     />
                   ))}
-                  <span className="text-xs text-slate-300 ml-1.5">
+                  <span className={`text-xs ml-1.5 ${isSelected ? "text-white" : "text-neutral-600"}`}>
                     {stars}★ & above
                   </span>
                 </div>
@@ -193,7 +218,7 @@ export default function ProductFilters({
   return (
     <>
       {/* Desktop Sticky Sidebar */}
-      <aside className="hidden lg:block w-64 shrink-0 bg-slate-900/40 border border-slate-800/80 rounded-2xl p-5 sticky top-24 self-start">
+      <aside className="hidden lg:block w-64 shrink-0 bg-white border border-neutral-200/80 rounded-3xl p-6 shadow-sm sticky top-24 self-start">
         {content}
       </aside>
 
@@ -203,27 +228,27 @@ export default function ProductFilters({
           {/* Backdrop */}
           <div
             onClick={onCloseMobile}
-            className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm transition-opacity"
           />
 
           {/* Drawer Panel */}
-          <div className="relative ml-auto w-full max-w-xs bg-slate-950 border-l border-slate-800 p-6 flex flex-col h-full overflow-y-auto shadow-2xl">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
-              <span className="font-bold text-lg text-white">Filters</span>
+          <div className="relative ml-auto w-full max-w-xs bg-white border-l border-neutral-200 p-6 flex flex-col h-full overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between pb-4 border-b border-neutral-100 mb-4">
+              <span className="font-bold text-lg text-neutral-900">Filters</span>
               <button
                 type="button"
                 onClick={onCloseMobile}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900"
+                className="p-1.5 rounded-full text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
             </div>
             {content}
-            <div className="mt-8 pt-4 border-t border-slate-800">
+            <div className="mt-8 pt-4 border-t border-neutral-100">
               <button
                 type="button"
                 onClick={onCloseMobile}
-                className="w-full py-2.5 rounded-xl bg-indigo-600 text-white font-medium text-sm transition hover:bg-indigo-500 shadow-lg shadow-indigo-600/20"
+                className="w-full py-2.5 rounded-full bg-neutral-900 text-white font-semibold text-xs transition hover:bg-neutral-800 shadow-sm"
               >
                 Apply Filters
               </button>

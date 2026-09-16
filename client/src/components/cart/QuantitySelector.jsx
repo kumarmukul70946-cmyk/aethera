@@ -1,12 +1,7 @@
 import React from "react";
 
 /**
- * Reusable Quantity Selector component.
- * @param {Object} props
- * @param {number} props.quantity - Current value
- * @param {number} props.maxStock - Maximum allowable stock
- * @param {Function} props.onChange - Callback with new quantity
- * @param {boolean} [props.disabled=false]
+ * Reusable Quantity Selector component — Warm-light Japandi style.
  */
 export default function QuantitySelector({
   quantity = 1,
@@ -27,24 +22,24 @@ export default function QuantitySelector({
   };
 
   return (
-    <div className="inline-flex items-center rounded-xl bg-slate-900 border border-slate-800 p-1">
+    <div className="inline-flex items-center rounded-full bg-neutral-100 border border-neutral-200 p-1 shadow-xs">
       <button
         type="button"
         onClick={handleDecrement}
         disabled={quantity <= 1 || disabled}
-        className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition"
+        className="w-7 h-7 rounded-full bg-white text-neutral-700 hover:bg-neutral-200 disabled:opacity-30 transition flex items-center justify-center text-xs font-bold shadow-xs"
         aria-label="Decrease quantity"
       >
         -
       </button>
-      <span className="w-9 text-center text-xs font-semibold text-slate-200">
+      <span className="w-8 text-center text-xs font-bold text-neutral-900">
         {quantity}
       </span>
       <button
         type="button"
         onClick={handleIncrement}
         disabled={quantity >= maxStock || disabled}
-        className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition"
+        className="w-7 h-7 rounded-full bg-white text-neutral-700 hover:bg-neutral-200 disabled:opacity-30 transition flex items-center justify-center text-xs font-bold shadow-xs"
         aria-label="Increase quantity"
       >
         +

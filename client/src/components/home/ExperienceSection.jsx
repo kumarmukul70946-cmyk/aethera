@@ -20,8 +20,8 @@ export default function ExperienceSection() {
       title: "Interactive 3D Product Twins",
       description:
         "Inspect flagship hardware with millimeter-accurate 360° rotation, physical zoom, and studio lighting simulation directly in your browser.",
-      actionText: "Try 3D Studio",
-      actionLink: "/3d-demo",
+      actionText: "Browse Catalog",
+      actionLink: "/products",
       highlights: ["OrbitControls & Reset", "Studio Lighting Calibration", "Bounding Box Normalization"]
     },
     {

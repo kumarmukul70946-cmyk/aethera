@@ -8,7 +8,7 @@ import ProductGrid from "../components/product/ProductGrid.jsx";
 import ProductSearch from "../components/product/ProductSearch.jsx";
 import Pagination from "../components/common/Pagination.jsx";
 import useDebounce from "../hooks/useDebounce.js";
-import { SparklesIcon, FilterIcon, StarIcon } from "../components/common/Icons.jsx";
+import { SparklesIcon, FilterIcon } from "../components/common/Icons.jsx";
 
 const SUGGESTIONS = [
   "comfortable shoes for marathon training",
@@ -131,7 +131,6 @@ export default function Search() {
           result.pagination || { page: currentPage, limit: 12, total: result.products?.length || 0, totalPages: 1 }
         );
 
-        // Track search interaction analytics
         trackingService.trackSearch(q.trim(), {
           source: "search_page",
           mode,
@@ -193,30 +192,30 @@ export default function Search() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-screen text-neutral-900">
       {/* Header & Search Bar */}
       <div className="max-w-3xl mx-auto text-center mb-8 space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">
-          <SparklesIcon className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Part 15 — AI Semantic Search</span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-600 text-xs font-semibold uppercase tracking-wider mb-2">
+          <SparklesIcon className="w-3.5 h-3.5 text-neutral-800" />
+          <span>AI Semantic Search Engine</span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-tight">
           Find Products by Meaning
         </h1>
-        <p className="text-sm text-slate-400 max-w-xl mx-auto">
+        <p className="text-xs sm:text-sm text-neutral-500 font-light max-w-xl mx-auto">
           Describe what you need in natural language or switch to exact keyword search.
         </p>
 
         {/* Mode Selector Tabs */}
-        <div className="inline-flex p-1 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-inner">
+        <div className="inline-flex p-1 rounded-full bg-neutral-100 border border-neutral-200 shadow-xs">
           <button
             type="button"
             onClick={() => handleModeToggle("semantic")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition ${
               searchMode === "semantic"
-                ? "bg-gradient-to-r from-indigo-600 to-cyan-600 text-white shadow-md shadow-indigo-600/30"
-                : "text-slate-400 hover:text-white"
+                ? "bg-neutral-900 text-white shadow-xs"
+                : "text-neutral-600 hover:text-neutral-900"
             }`}
           >
             <SparklesIcon className="w-3.5 h-3.5" />
@@ -225,10 +224,10 @@ export default function Search() {
           <button
             type="button"
             onClick={() => handleModeToggle("keyword")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition ${
               searchMode === "keyword"
-                ? "bg-slate-800 text-white shadow-md"
-                : "text-slate-400 hover:text-white"
+                ? "bg-neutral-900 text-white shadow-xs"
+                : "text-neutral-600 hover:text-neutral-900"
             }`}
           >
             <span>Exact Keyword</span>
@@ -254,13 +253,13 @@ export default function Search() {
 
         {/* Suggestion Chips */}
         <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-          <span className="text-xs text-slate-500 font-medium">Try:</span>
+          <span className="text-xs text-neutral-400 font-medium">Try:</span>
           {SUGGESTIONS.map((phrase) => (
             <button
               key={phrase}
               type="button"
               onClick={() => handleSuggestionClick(phrase)}
-              className="text-xs px-3 py-1 rounded-full bg-slate-900/70 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800 text-slate-400 hover:text-indigo-300 transition"
+              className="text-xs px-3.5 py-1 rounded-full bg-white border border-neutral-200 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white text-neutral-600 shadow-xs transition"
             >
               {phrase}
             </button>
@@ -269,30 +268,30 @@ export default function Search() {
       </div>
 
       {/* Filter Toolbar & Status */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 mb-6 border-b border-slate-800 gap-4 text-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 mb-6 border-b border-neutral-200/80 gap-4 text-sm">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-semibold transition shadow-xs ${
               hasActiveFilters || showFilters
-                ? "bg-indigo-600/20 text-indigo-400 border-indigo-500/40"
-                : "bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700"
+                ? "bg-neutral-900 text-white border-neutral-900"
+                : "bg-white border-neutral-200 text-neutral-800 hover:border-neutral-900"
             }`}
           >
             <FilterIcon className="w-3.5 h-3.5" />
             <span>Filters</span>
             {hasActiveFilters && (
-              <span className="w-2 h-2 rounded-full bg-indigo-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-white" />
             )}
           </button>
 
           {queryParam && (
-            <p className="text-slate-400 text-xs sm:text-sm">
-              Showing results for{" "}
-              <span className="text-indigo-400 font-semibold">"{queryParam}"</span>
+            <p className="text-neutral-500 text-xs sm:text-sm font-light">
+              Results for{" "}
+              <span className="text-neutral-900 font-semibold">"{queryParam}"</span>
               {effectiveSearchMode === "keyword_fallback" && (
-                <span className="ml-2 text-amber-400 font-normal text-xs">
+                <span className="ml-2 text-amber-600 font-medium text-xs">
                   (Keyword fallback mode)
                 </span>
               )}
@@ -305,13 +304,13 @@ export default function Search() {
             <button
               type="button"
               onClick={handleResetAll}
-              className="text-xs text-rose-400 hover:text-rose-300 transition font-medium"
+              className="text-xs text-neutral-900 hover:text-neutral-600 transition font-semibold underline"
             >
               Clear Filters
             </button>
           )}
           {queryParam && (
-            <span className="text-xs font-semibold text-slate-400 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">
+            <span className="text-xs font-semibold text-neutral-700 bg-neutral-100 px-3 py-1 rounded-full border border-neutral-200">
               {pagination.total} {pagination.total === 1 ? "result" : "results"}
             </span>
           )}
@@ -326,15 +325,15 @@ export default function Search() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             onSubmit={handleApplyFilters}
-            className="mb-8 p-5 rounded-2xl bg-slate-900/90 border border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs overflow-hidden"
+            className="mb-8 p-6 rounded-3xl bg-white border border-neutral-200/80 shadow-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs overflow-hidden"
           >
             {/* Category */}
             <div>
-              <label className="block font-semibold text-slate-300 mb-1.5">Category</label>
+              <label className="block font-semibold text-neutral-800 mb-1.5">Category</label>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-neutral-200 text-neutral-800 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
               >
                 <option value="">All Categories</option>
                 {categories.map((c) => (
@@ -347,49 +346,49 @@ export default function Search() {
 
             {/* Brand */}
             <div>
-              <label className="block font-semibold text-slate-300 mb-1.5">Brand</label>
+              <label className="block font-semibold text-neutral-800 mb-1.5">Brand</label>
               <input
                 type="text"
                 value={selectedBrand}
                 onChange={(e) => setSelectedBrand(e.target.value)}
                 placeholder="e.g. Aether, Lumina"
-                className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-neutral-200 text-neutral-800 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
               />
             </div>
 
             {/* Price Range */}
             <div>
-              <label className="block font-semibold text-slate-300 mb-1.5">Min Price (₹)</label>
+              <label className="block font-semibold text-neutral-800 mb-1.5">Min Price (₹)</label>
               <input
                 type="number"
                 min="0"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
                 placeholder="0"
-                className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-neutral-200 text-neutral-800 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-300 mb-1.5">Max Price (₹)</label>
+              <label className="block font-semibold text-neutral-800 mb-1.5">Max Price (₹)</label>
               <input
                 type="number"
                 min="0"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
                 placeholder="No limit"
-                className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-neutral-200 text-neutral-800 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
               />
             </div>
 
             {/* Rating & Submit */}
             <div className="flex flex-col justify-between">
               <div>
-                <label className="block font-semibold text-slate-300 mb-1.5">Min Rating</label>
+                <label className="block font-semibold text-neutral-800 mb-1.5">Min Rating</label>
                 <select
                   value={minRating}
                   onChange={(e) => setMinRating(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3 py-2 rounded-xl bg-neutral-50 border border-neutral-200 text-neutral-800 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
                 >
                   <option value="">Any Rating</option>
                   <option value="4.5">4.5+ Stars</option>
@@ -401,7 +400,7 @@ export default function Search() {
               <div className="pt-3 flex gap-2">
                 <button
                   type="submit"
-                  className="flex-1 py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition text-center"
+                  className="flex-1 py-2 px-4 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white font-semibold transition text-center shadow-xs"
                 >
                   Apply
                 </button>
@@ -414,7 +413,7 @@ export default function Search() {
                     setMaxPrice("");
                     setMinRating("");
                   }}
-                  className="py-2 px-3 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"
+                  className="py-2 px-3 rounded-full bg-neutral-100 text-neutral-600 hover:bg-neutral-200 transition"
                 >
                   Reset
                 </button>
@@ -437,22 +436,18 @@ export default function Search() {
             : "Enter a search query or choose an AI suggested query above to browse the catalog."
         }
         onResetFilters={handleResetAll}
-        onRetry={() => {
-          updateUrlParams({ page: currentPage });
-        }}
+        onRetry={() => {}}
       />
 
       {/* Pagination */}
-      {!loading && products.length > 0 && pagination.totalPages > 1 && (
-        <div className="pt-8">
-          <Pagination
-            page={pagination.page}
-            totalPages={pagination.totalPages}
-            total={pagination.total}
-            limit={pagination.limit}
-            onPageChange={handlePageChange}
-          />
-        </div>
+      {!loading && products.length > 0 && (
+        <Pagination
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          total={pagination.total}
+          limit={pagination.limit}
+          onPageChange={handlePageChange}
+        />
       )}
     </div>
   );

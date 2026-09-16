@@ -1,16 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import useParallax from "../../hooks/useParallax.js";
 
 export default function PromoBanners() {
+  const { ref: iphoneBannerRef, offsetY: iphoneOffset } = useParallax(18);
+  const { ref: streetwearBannerRef, offsetY: streetwearOffset } = useParallax(18);
+
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Card 1: iPhone 16 Pro */}
         <motion.div
+          ref={iphoneBannerRef}
           whileHover={{ y: -3 }}
           transition={{ duration: 0.25 }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1c0f2b] via-[#150a21] to-[#0e0616] p-8 sm:p-10 flex flex-col justify-between min-h-[300px] sm:min-h-[320px] text-white shadow-sm hover:shadow-xl transition"
+          className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1c0f2b] via-[#150a21] to-[#0e0616] p-8 sm:p-10 flex flex-col justify-between min-h-[300px] sm:min-h-[320px] text-white shadow-sm hover:shadow-xl transition"
         >
           {/* Content Left */}
           <div className="relative z-10 max-w-[55%] flex flex-col items-start">
@@ -28,16 +33,20 @@ export default function PromoBanners() {
               className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-white text-neutral-900 text-xs font-semibold hover:bg-neutral-100 transition shadow-sm"
             >
               <span>Shop Now</span>
-              <span className="text-sm">→</span>
+              <span className="text-sm btn-arrow">→</span>
             </Link>
           </div>
 
-          {/* Right Product Image */}
+          {/* Right Product Image with subtle parallax */}
           <div className="absolute right-0 top-0 bottom-0 w-[55%] flex items-center justify-end overflow-hidden pointer-events-none">
             <img
               src="/images/promo_iphone.jpg"
               alt="iPhone 16 Pro"
-              className="w-full h-full object-cover object-center scale-105"
+              style={{
+                transform: `translate3d(0, ${iphoneOffset}px, 0)`,
+                transition: "transform 100ms ease-out"
+              }}
+              className="w-full h-full object-cover object-center scale-105 group-hover:scale-110 transition-transform duration-700 ease-out"
             />
             {/* Soft edge blend gradient */}
             <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#1c0f2b] via-[#1c0f2b]/70 to-transparent" />
@@ -46,9 +55,10 @@ export default function PromoBanners() {
 
         {/* Card 2: Streetwear Collection */}
         <motion.div
+          ref={streetwearBannerRef}
           whileHover={{ y: -3 }}
           transition={{ duration: 0.25 }}
-          className="relative overflow-hidden rounded-3xl bg-[#EBE4DC] p-8 sm:p-10 flex flex-col justify-between min-h-[300px] sm:min-h-[320px] text-neutral-900 shadow-sm hover:shadow-xl transition"
+          className="group relative overflow-hidden rounded-3xl bg-[#EBE4DC] p-8 sm:p-10 flex flex-col justify-between min-h-[300px] sm:min-h-[320px] text-neutral-900 shadow-sm hover:shadow-xl transition"
         >
           {/* Content Left */}
           <div className="relative z-10 max-w-[55%] flex flex-col items-start">
@@ -66,16 +76,20 @@ export default function PromoBanners() {
               className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-neutral-800 text-neutral-900 text-xs font-semibold hover:bg-neutral-900 hover:text-white transition shadow-sm"
             >
               <span>Explore Collection</span>
-              <span className="text-sm">→</span>
+              <span className="text-sm btn-arrow">→</span>
             </Link>
           </div>
 
-          {/* Right Lifestyle Image */}
+          {/* Right Lifestyle Image with subtle parallax */}
           <div className="absolute right-0 top-0 bottom-0 w-[52%] flex items-center justify-end overflow-hidden pointer-events-none">
             <img
               src="/images/promo_streetwear.jpg"
               alt="Streetwear Collection"
-              className="w-full h-full object-cover object-center"
+              style={{
+                transform: `translate3d(0, ${streetwearOffset}px, 0)`,
+                transition: "transform 100ms ease-out"
+              }}
+              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#EBE4DC] to-transparent" />
           </div>

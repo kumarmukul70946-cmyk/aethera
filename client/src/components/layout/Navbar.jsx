@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useAuth } from "../../hooks/useAuth.js";
 import { selectCartItemCount } from "../../features/cart/cartSlice.js";
 import { selectWishlistItemCount } from "../../features/wishlist/wishlistSlice.js";
-import { openAssistant } from "../../features/ai/aiSlice.js";
 import {
   SearchIcon,
   CartIcon,
@@ -12,7 +11,6 @@ import {
   UserIcon,
   MenuIcon,
   CloseIcon,
-  SparklesIcon,
   CubeIcon
 } from "../common/Icons.jsx";
 
@@ -20,12 +18,22 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [navSearch, setNavSearch] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, isAuthenticated, logout } = useAuth();
 
   const cartCount = useSelector(selectCartItemCount);
   const wishlistCount = useSelector(selectWishlistItemCount);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -50,7 +58,13 @@ export default function Navbar() {
     }`;
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-neutral-200/70 transition shadow-xs">
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/80 backdrop-blur-xl border-b border-neutral-200/90 shadow-xs"
+          : "bg-white/95 backdrop-blur-md border-b border-neutral-200/60 shadow-none"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-3 sm:gap-6">
           {/* Brand Logo */}
@@ -79,15 +93,10 @@ export default function Navbar() {
             <NavLink to="/products" className={navLinkClass}>
               Products
             </NavLink>
-            <NavLink to="/products" className={navLinkClass}>
+            <NavLink to="/categories" className={navLinkClass}>
               Categories
             </NavLink>
-            <NavLink to="/3d-demo" className={navLinkClass}>
-              <span className="flex items-center gap-1">
-                <span>3D Lab</span>
-              </span>
-            </NavLink>
-            <NavLink to="/products?discount=true" className={navLinkClass}>
+            <NavLink to="/deals" className={navLinkClass}>
               Deals
             </NavLink>
           </nav>
@@ -109,16 +118,6 @@ export default function Navbar() {
 
           {/* Right Action Items */}
           <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-            {/* AI Assistant Quick Trigger */}
-            <button
-              type="button"
-              onClick={() => dispatch(openAssistant())}
-              className="p-1.5 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50/60 rounded-full transition flex items-center gap-1 text-xs font-semibold"
-              title="Aethera AI Assistant"
-            >
-              <SparklesIcon className="w-4 h-4 text-indigo-600" />
-              <span className="hidden xl:inline text-[11px]">AI Assistant</span>
-            </button>
 
             {/* Wishlist Link */}
             <Link
@@ -258,21 +257,14 @@ export default function Navbar() {
                 Products
               </Link>
               <Link
-                to="/products"
+                to="/categories"
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-3 py-2 rounded-xl text-sm font-medium text-neutral-800 hover:bg-neutral-100"
               >
                 Categories
               </Link>
               <Link
-                to="/3d-demo"
-                onClick={() => setMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl text-sm font-medium text-neutral-800 hover:bg-neutral-100"
-              >
-                3D Lab
-              </Link>
-              <Link
-                to="/products?discount=true"
+                to="/deals"
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-3 py-2 rounded-xl text-sm font-medium text-neutral-800 hover:bg-neutral-100"
               >

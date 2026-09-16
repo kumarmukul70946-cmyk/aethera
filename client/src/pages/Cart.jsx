@@ -51,9 +51,9 @@ export default function Cart() {
 
   if (loading && items.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-sm text-slate-400">Loading your shopping cart...</p>
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <div className="w-10 h-10 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-sm font-medium text-neutral-500">Loading your shopping cart...</p>
       </div>
     );
   }
@@ -72,19 +72,19 @@ export default function Cart() {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center p-12 bg-slate-900/40 border border-slate-800 rounded-3xl space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto">
-            <CartIcon className="w-8 h-8" />
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center p-12 sm:p-16 bg-white border border-neutral-200/80 rounded-3xl shadow-sm space-y-5">
+          <div className="w-16 h-16 rounded-full bg-neutral-100 text-neutral-800 flex items-center justify-center mx-auto">
+            <CartIcon className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl font-bold text-white">Your cart is empty</h2>
-          <p className="text-sm text-slate-400 max-w-sm mx-auto">
-            Looks like you haven't added any gear to your cart yet. Explore our latest arrivals!
+          <h2 className="text-3xl font-serif font-normal text-neutral-900">Your cart is empty</h2>
+          <p className="text-sm text-neutral-500 max-w-md mx-auto leading-relaxed">
+            Looks like you haven't added any curated pieces to your bag yet. Explore our latest arrivals and design icons.
           </p>
-          <div className="pt-2">
+          <div className="pt-4">
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition shadow-lg shadow-indigo-600/25"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold uppercase tracking-wider transition shadow-sm"
             >
               Explore Products Catalog
             </Link>
@@ -95,15 +95,16 @@ export default function Cart() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
       {/* Title & Clear Action */}
-      <div className="flex items-center justify-between pb-6 border-b border-slate-800 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-6 border-b border-neutral-200/80 mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
-            Shopping Cart
+          <span className="text-xs font-semibold tracking-widest uppercase text-neutral-400">Shopping Bag</span>
+          <h1 className="text-3xl sm:text-4xl font-serif font-normal text-neutral-900 tracking-tight mt-1">
+            Review Your Cart
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Review your selected products and proceed to checkout
+          <p className="text-sm text-neutral-500 mt-1">
+            {itemCount} {itemCount === 1 ? "item" : "items"} selected &mdash; complimentary insured shipping available
           </p>
         </div>
 
@@ -111,7 +112,7 @@ export default function Cart() {
           type="button"
           onClick={handleClear}
           disabled={actionLoading}
-          className="text-xs font-semibold text-slate-400 hover:text-rose-400 transition"
+          className="text-xs font-semibold uppercase tracking-wider text-neutral-400 hover:text-rose-600 transition"
         >
           Clear Cart
         </button>
@@ -119,8 +120,8 @@ export default function Cart() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
         {/* Cart Items List */}
-        <div className="lg:col-span-2 space-y-2 bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6">
-          <div className="divide-y divide-slate-800/60">
+        <div className="lg:col-span-2 bg-white border border-neutral-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
+          <div className="divide-y divide-neutral-100">
             {items.map((item) => (
               <CartItem
                 key={item._id}

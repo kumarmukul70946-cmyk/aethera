@@ -3,13 +3,13 @@ import HeroSection from "../components/home/HeroSection.jsx";
 import CategoryShowcase from "../components/home/CategoryShowcase.jsx";
 import PromoBanners from "../components/home/PromoBanners.jsx";
 import FeaturedProducts from "../components/home/FeaturedProducts.jsx";
-import ThreeDimensionBanner from "../components/home/ThreeDimensionBanner.jsx";
 import WhyChooseSection from "../components/home/WhyChooseSection.jsx";
 import SeasonalBanners from "../components/home/SeasonalBanners.jsx";
 import PopularBrands from "../components/home/PopularBrands.jsx";
 import TestimonialsSection from "../components/home/TestimonialsSection.jsx";
 import AppDownloadSection from "../components/home/AppDownloadSection.jsx";
 import NewsletterSection from "../components/home/NewsletterSection.jsx";
+import ScrollReveal from "../components/common/ScrollReveal.jsx";
 
 /**
  * Home Page
@@ -34,34 +34,50 @@ export default function Home() {
       <HeroSection />
 
       {/* 2. Shop By Category */}
-      <CategoryShowcase />
+      <ScrollReveal delay={0}>
+        <CategoryShowcase />
+      </ScrollReveal>
 
       {/* 3. Promotional Banners (iPhone 16 Pro & Streetwear) */}
-      <PromoBanners />
+      <ScrollReveal delay={40}>
+        <PromoBanners />
+      </ScrollReveal>
 
       {/* 4. Featured Products (6 items) */}
-      <FeaturedProducts />
+      <ScrollReveal delay={40}>
+        <FeaturedProducts />
+      </ScrollReveal>
 
-      {/* 5. 3D Banner: Bring Products to Life */}
-      <ThreeDimensionBanner />
-
-      {/* 6. Why Choose Aethera & 360° Preview */}
-      <WhyChooseSection />
+      {/* 5. Why Choose Aethera */}
+      <ScrollReveal delay={40}>
+        <WhyChooseSection />
+      </ScrollReveal>
 
       {/* 7. Seasonal Banners (Summer Essentials & Home Living) */}
-      <SeasonalBanners />
+      <ScrollReveal delay={40}>
+        <SeasonalBanners />
+      </ScrollReveal>
 
       {/* 8. Popular Brands */}
-      <PopularBrands />
+      <ScrollReveal delay={40}>
+        <PopularBrands />
+      </ScrollReveal>
 
       {/* 9. Customer Testimonials */}
-      <TestimonialsSection />
+      <ScrollReveal delay={40}>
+        <TestimonialsSection />
+      </ScrollReveal>
 
       {/* 10. Mobile App Download */}
-      <AppDownloadSection />
+      <ScrollReveal delay={40}>
+        <AppDownloadSection />
+      </ScrollReveal>
 
       {/* 11. Stay in the Loop Newsletter */}
-      <NewsletterSection />
+      <ScrollReveal delay={40}>
+        <NewsletterSection />
+      </ScrollReveal>
     </div>
   );
 }
+

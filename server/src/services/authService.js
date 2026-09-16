@@ -143,9 +143,85 @@ export const changeUserPassword = async (userId, { currentPassword, newPassword 
   return true;
 };
 
+/**
+ * Authenticate or register a user via Google OAuth credential / profile.
+ */
+export const googleLoginUser = async ({ credential, email, name, avatar, googleId }) => {
+  let userEmail = email;
+  let userName = name;
+  let userAvatar = avatar;
+  let userGoogleId = googleId;
+
+  // If a JWT credential token from Google Identity Services is provided, decode payload
+  if (credential && typeof credential === "string") {
+    try {
+      const parts = credential.split(".");
+      if (parts.length === 3) {
+        const payloadJson = Buffer.from(parts[1], "base64").toString("utf8");
+        const payload = JSON.parse(payloadJson);
+        if (payload.email) userEmail = payload.email;
+        if (payload.name) userName = payload.name;
+        if (payload.picture) userAvatar = payload.picture;
+        if (payload.sub) userGoogleId = payload.sub;
+      }
+    } catch (e) {
+      console.warn("Failed to decode Google credential JWT:", e.message);
+    }
+  }
+
+  if (!userEmail) {
+    const error = new Error("Google account email is required.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  userEmail = userEmail.toLowerCase().trim();
+  if (!userGoogleId) {
+    userGoogleId = `google_${Buffer.from(userEmail).toString("hex").slice(0, 16)}`;
+  }
+
+  // 1. Search for existing user with googleId
+  let user = await User.findOne({ googleId: userGoogleId });
+
+  // 2. If not found by googleId, check by email to link accounts
+  if (!user) {
+    user = await User.findOne({ email: userEmail });
+    if (user) {
+      user.googleId = userGoogleId;
+      if (!user.authProvider || user.authProvider === "local") {
+        user.authProvider = "google";
+      }
+      if (!user.avatar && userAvatar) {
+        user.avatar = userAvatar;
+      }
+      await user.save();
+    }
+  }
+
+  // 3. If still not found, create new customer user
+  if (!user) {
+    user = await User.create({
+      name: userName || userEmail.split("@")[0],
+      email: userEmail,
+      googleId: userGoogleId,
+      authProvider: "google",
+      avatar: userAvatar || "",
+      role: "customer"
+    });
+  }
+
+  const token = generateToken(user);
+
+  return {
+    user: formatSafeUser(user),
+    token
+  };
+};
+
 export default {
   registerUser,
   loginUser,
+  googleLoginUser,
   getUserProfile,
   updateUserProfile,
   changeUserPassword

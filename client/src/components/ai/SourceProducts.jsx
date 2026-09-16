@@ -12,10 +12,10 @@ export default function SourceProducts({ sources = [] }) {
   if (!sources || sources.length === 0) return null;
 
   return (
-    <div className="mt-3 pt-3 border-t border-slate-700/50">
+    <div className="mt-3 pt-3 border-t border-neutral-100">
       <div className="flex items-center gap-1.5 mb-2">
         <svg
-          className="w-3.5 h-3.5 text-cyan-400"
+          className="w-3.5 h-3.5 text-neutral-800"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -27,12 +27,12 @@ export default function SourceProducts({ sources = [] }) {
             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
           Catalog Sources ({sources.length})
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {sources.map((product) => {
           const targetUrl = product.slug
             ? `/product/${product.slug}`
@@ -51,40 +51,40 @@ export default function SourceProducts({ sources = [] }) {
             <Link
               key={product.id}
               to={targetUrl}
-              className="group flex items-center gap-3 p-2 rounded-xl bg-slate-900/70 hover:bg-slate-750 border border-slate-700/60 hover:border-cyan-500/50 transition-all duration-200"
+              className="group flex items-center gap-2.5 p-2 rounded-2xl bg-white hover:border-neutral-400 border border-neutral-200/80 transition-all duration-200 shadow-sm"
             >
-              <div className="w-12 h-12 rounded-lg bg-slate-800 flex-shrink-0 overflow-hidden border border-slate-700/40 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-[#FAF9F6] flex-shrink-0 overflow-hidden border border-neutral-200/60 flex items-center justify-center">
                 {primaryImg ? (
                   <img
                     src={primaryImg}
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-250"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
                 ) : (
-                  <span className="text-xs text-slate-500">No Img</span>
+                  <span className="text-xs text-neutral-400">✨</span>
                 )}
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-slate-200 group-hover:text-cyan-300 truncate">
+                <p className="text-xs font-medium text-neutral-900 group-hover:text-neutral-600 truncate">
                   {product.name}
                 </p>
-                <p className="text-[11px] text-slate-400 truncate">
+                <p className="text-[10px] text-neutral-400 truncate">
                   {product.brand}
                 </p>
                 <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs font-bold text-amber-400">
+                  <span className="text-xs font-serif font-medium text-neutral-900">
                     {formatCurrency(product.finalPrice || product.price)}
                   </span>
                   <span
-                    className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
+                    className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${
                       isOutOfStock
-                        ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                        : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                        ? "bg-rose-50 text-rose-700 border border-rose-200"
+                        : "bg-neutral-100 text-neutral-800 border border-neutral-200"
                     }`}
                   >
-                    {isOutOfStock ? "Out of Stock" : "In Stock"}
+                    {isOutOfStock ? "Sold Out" : "In Stock"}
                   </span>
                 </div>
               </div>

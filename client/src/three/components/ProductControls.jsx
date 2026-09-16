@@ -23,7 +23,8 @@ export const ProductControls = forwardRef(function ProductControls(
       ref={ref}
       makeDefault
       enableDamping
-      dampingFactor={0.05}
+      dampingFactor={0.04}
+      rotateSpeed={0.85}
       autoRotate={autoRotate}
       autoRotateSpeed={autoRotateSpeed}
       minDistance={minDistance}

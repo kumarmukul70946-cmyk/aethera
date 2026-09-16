@@ -37,6 +37,17 @@ export const authService = {
   },
 
   /**
+   * Authenticate or register via Google.
+   * Server sets HTTP-only cookie on success.
+   * @param {Object} googleData - { credential, email, name, avatar, googleId }
+   * @returns {Promise<Object>} user object
+   */
+  async googleLogin(googleData) {
+    const response = await api.post("/auth/google", googleData);
+    return response.data.data.user;
+  },
+
+  /**
    * Logout user and clear HTTP-only cookie on server.
    * @returns {Promise<Object>} response data
    */

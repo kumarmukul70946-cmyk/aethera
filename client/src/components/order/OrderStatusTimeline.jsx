@@ -15,13 +15,13 @@ export default function OrderStatusTimeline({ status = "PENDING" }) {
 
   if (isCancelled) {
     return (
-      <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center gap-3 text-rose-400">
-        <div className="w-8 h-8 rounded-xl bg-rose-500/20 flex items-center justify-center shrink-0">
-          <CloseIcon className="w-4 h-4" />
+      <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center gap-3 text-rose-700">
+        <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
+          <CloseIcon className="w-4 h-4 text-rose-600" />
         </div>
         <div>
-          <h4 className="text-sm font-bold">Order Cancelled</h4>
-          <p className="text-xs text-rose-400/80">
+          <h4 className="text-sm font-semibold">Order Cancelled</h4>
+          <p className="text-xs text-rose-600/80">
             This order was cancelled. Any deducted stock has been restored.
           </p>
         </div>
@@ -36,9 +36,9 @@ export default function OrderStatusTimeline({ status = "PENDING" }) {
     <div className="w-full py-4">
       <div className="flex items-center justify-between relative">
         {/* Connecting Progress Line */}
-        <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-1 bg-slate-800 -z-0">
+        <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-0.5 bg-neutral-200 -z-0">
           <div
-            className="h-full bg-indigo-600 transition-all duration-500"
+            className="h-full bg-neutral-900 transition-all duration-500"
             style={{
               width: `${(activeIndex / (STEPS.length - 1)) * 100}%`
             }}
@@ -58,25 +58,25 @@ export default function OrderStatusTimeline({ status = "PENDING" }) {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition border ${
                   isDone
-                    ? "bg-indigo-600 border-indigo-500 text-white"
+                    ? "bg-neutral-900 border-neutral-900 text-white"
                     : isCurrent
-                    ? "bg-slate-950 border-indigo-500 ring-4 ring-indigo-500/20 text-indigo-400 font-bold"
-                    : "bg-slate-900 border-slate-800 text-slate-500"
+                    ? "bg-white border-2 border-neutral-900 ring-4 ring-neutral-900/10 text-neutral-900 font-bold"
+                    : "bg-neutral-100 border-neutral-200 text-neutral-400"
                 }`}
               >
                 {isDone ? (
-                  <CheckIcon className="w-4 h-4" />
+                  <CheckIcon className="w-3.5 h-3.5" />
                 ) : (
                   <span className="text-xs">{idx + 1}</span>
                 )}
               </div>
               <span
-                className={`text-[10px] sm:text-xs font-semibold mt-2 text-center hidden md:inline-block max-w-[80px] ${
+                className={`text-[10px] sm:text-xs font-medium mt-2 text-center hidden md:inline-block max-w-[84px] ${
                   isCurrent
-                    ? "text-indigo-400 font-bold"
+                    ? "text-neutral-900 font-semibold"
                     : isDone
-                    ? "text-slate-200"
-                    : "text-slate-500"
+                    ? "text-neutral-700"
+                    : "text-neutral-400"
                 }`}
               >
                 {step.label}
@@ -88,8 +88,8 @@ export default function OrderStatusTimeline({ status = "PENDING" }) {
 
       {/* Mobile status label */}
       <div className="text-center mt-4 md:hidden">
-        <span className="text-xs text-slate-400">Current Status: </span>
-        <span className="text-xs font-bold text-indigo-400">
+        <span className="text-xs text-neutral-400">Current Status: </span>
+        <span className="text-xs font-semibold text-neutral-900">
           {STEPS[activeIndex]?.label || status}
         </span>
       </div>

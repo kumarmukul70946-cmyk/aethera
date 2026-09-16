@@ -41,6 +41,19 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+// Google OAuth Login or Register
+export const googleLoginUser = createAsyncThunk(
+  "auth/googleLoginUser",
+  async (googleData, { rejectWithValue }) => {
+    try {
+      const user = await authService.googleLogin(googleData);
+      return user;
+    } catch (error) {
+      return rejectWithValue(error.message || "Failed to authenticate with Google");
+    }
+  }
+);
+
 // Logout customer
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
@@ -115,6 +128,22 @@ export const authSlice = createSlice({
         state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
+        state.actionLoading = false;
+        state.error = action.payload;
+      })
+
+      // googleLoginUser
+      .addCase(googleLoginUser.pending, (state) => {
+        state.actionLoading = true;
+        state.error = null;
+      })
+      .addCase(googleLoginUser.fulfilled, (state, action) => {
+        state.actionLoading = false;
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(googleLoginUser.rejected, (state, action) => {
         state.actionLoading = false;
         state.error = action.payload;
       })

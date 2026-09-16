@@ -8,7 +8,7 @@ function FormattedAssistantText({ text = "" }) {
   const lines = text.split("\n");
 
   return (
-    <div className="space-y-1.5 text-sm text-slate-200 leading-relaxed">
+    <div className="space-y-1.5 text-xs sm:text-sm text-neutral-800 leading-relaxed">
       {lines.map((line, idx) => {
         if (!line.trim()) {
           return <div key={idx} className="h-1" />;
@@ -23,7 +23,7 @@ function FormattedAssistantText({ text = "" }) {
         const parsedContent = parts.map((part, pIdx) => {
           if (part.startsWith("**") && part.endsWith("**")) {
             return (
-              <strong key={pIdx} className="font-semibold text-cyan-300">
+              <strong key={pIdx} className="font-semibold text-neutral-900">
                 {part.slice(2, -2)}
               </strong>
             );
@@ -33,8 +33,8 @@ function FormattedAssistantText({ text = "" }) {
 
         if (isBullet) {
           return (
-            <div key={idx} className="flex items-start gap-2 pl-2">
-              <span className="text-cyan-400 mt-1 text-xs">•</span>
+            <div key={idx} className="flex items-start gap-2 pl-1">
+              <span className="text-neutral-900 mt-1 text-xs">•</span>
               <span className="flex-1">{parsedContent}</span>
             </div>
           );
@@ -42,7 +42,7 @@ function FormattedAssistantText({ text = "" }) {
 
         if (isNumber) {
           return (
-            <div key={idx} className="flex items-start gap-2 pl-2">
+            <div key={idx} className="flex items-start gap-2 pl-1">
               <span className="flex-1">{parsedContent}</span>
             </div>
           );
@@ -61,13 +61,13 @@ export default function ChatMessage({ message }) {
   const isUser = message.role === "user";
 
   return (
-    <div className={`flex items-start gap-3 my-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
+    <div className={`flex items-start gap-2.5 my-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
       {/* Avatar */}
       <div
-        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-md ${
+        className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-semibold uppercase shadow-sm ${
           isUser
-            ? "bg-gradient-to-tr from-amber-500 to-rose-500 text-white"
-            : "bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white"
+            ? "bg-neutral-800 text-white"
+            : "bg-neutral-900 text-white"
         }`}
       >
         {isUser ? "You" : "AI"}
@@ -75,14 +75,14 @@ export default function ChatMessage({ message }) {
 
       {/* Bubble */}
       <div
-        className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-lg ${
+        className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
           isUser
-            ? "bg-gradient-to-r from-amber-600/90 to-amber-700/90 text-white rounded-tr-none border border-amber-500/30"
-            : "bg-slate-800/90 text-slate-100 rounded-tl-none border border-slate-700/70"
+            ? "bg-neutral-900 text-white rounded-tr-none"
+            : "bg-white text-neutral-900 rounded-tl-none border border-neutral-200/80"
         }`}
       >
         {isUser ? (
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
         ) : (
           <div>
             <FormattedAssistantText text={message.content} />
@@ -94,8 +94,8 @@ export default function ChatMessage({ message }) {
 
         {/* Timestamp */}
         <div
-          className={`text-[10px] mt-1.5 ${
-            isUser ? "text-amber-200/70 text-right" : "text-slate-400"
+          className={`text-[9px] mt-1.5 ${
+            isUser ? "text-neutral-300 text-right" : "text-neutral-400"
           }`}
         >
           {message.createdAt

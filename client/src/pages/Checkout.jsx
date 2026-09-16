@@ -102,19 +102,20 @@ export default function Checkout() {
   const finalTotal = Math.max(0, cartSubtotal - discountAmount);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
       {/* Title */}
-      <div className="pb-6 border-b border-slate-800 mb-8">
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">
-          Secure Checkout
+      <div className="pb-6 border-b border-neutral-200/80 mb-8">
+        <span className="text-xs font-semibold tracking-widest uppercase text-neutral-400">Checkout</span>
+        <h1 className="text-3xl sm:text-4xl font-serif font-normal text-neutral-900 tracking-tight mt-1">
+          Finalize Your Order
         </h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Complete your delivery details and place your order
+        <p className="text-sm text-neutral-500 mt-1">
+          Complete delivery details and select payment method to dispatch your parcel
         </p>
       </div>
 
       {checkoutError && (
-        <div className="mb-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">
+        <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
           {checkoutError}
         </div>
       )}
@@ -123,7 +124,7 @@ export default function Checkout() {
         {/* Main Steps Column */}
         <div className="lg:col-span-2 space-y-8">
           {/* Step 1: Address Selection */}
-          <section className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6">
+          <section className="bg-white border border-neutral-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
             <AddressSelector
               addresses={addresses}
               selectedId={selectedAddressId}
@@ -136,15 +137,20 @@ export default function Checkout() {
           </section>
 
           {/* Step 2: Order Items Review */}
-          <section className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 space-y-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300">
-              Review Cart Items ({cartItemCount})
-            </h3>
-            <div className="divide-y divide-slate-800/60 max-h-72 overflow-y-auto pr-1">
+          <section className="bg-white border border-neutral-200/80 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
+              <div>
+                <span className="text-[10px] font-semibold tracking-widest uppercase text-neutral-400">Step 2</span>
+                <h3 className="text-base font-serif font-normal text-neutral-900">
+                  Review Items ({cartItemCount})
+                </h3>
+              </div>
+            </div>
+            <div className="divide-y divide-neutral-100 max-h-72 overflow-y-auto pr-1">
               {cartItems.map((item) => (
-                <div key={item._id} className="py-3 flex items-center justify-between gap-4 text-xs">
+                <div key={item._id} className="py-3.5 flex items-center justify-between gap-4 text-xs">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shrink-0 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-2xl bg-neutral-100 border border-neutral-200/60 overflow-hidden shrink-0 flex items-center justify-center">
                       {item.product?.images?.[0] ? (
                         <img
                           src={
@@ -160,15 +166,15 @@ export default function Checkout() {
                       )}
                     </div>
                     <div className="truncate">
-                      <p className="font-semibold text-slate-200 truncate">
+                      <p className="font-medium text-neutral-900 truncate">
                         {item.product?.name}
                       </p>
-                      <p className="text-slate-400">
+                      <p className="text-neutral-500 mt-0.5">
                         Qty: {item.quantity} × {formatCurrency(item.unitPrice)}
                       </p>
                     </div>
                   </div>
-                  <span className="font-bold text-slate-100 shrink-0">
+                  <span className="font-semibold text-neutral-900 shrink-0">
                     {formatCurrency(item.itemSubtotal)}
                   </span>
                 </div>
@@ -177,70 +183,73 @@ export default function Checkout() {
           </section>
 
           {/* Step 3: Payment Method */}
-          <section className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 space-y-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300">
-              Payment Method
-            </h3>
-            <div className="p-4 rounded-2xl bg-indigo-600/10 border border-indigo-500/30 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full border-2 border-indigo-500 flex items-center justify-center">
-                  <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
+          <section className="bg-white border border-neutral-200/80 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4">
+            <div>
+              <span className="text-[10px] font-semibold tracking-widest uppercase text-neutral-400">Step 3</span>
+              <h3 className="text-base font-serif font-normal text-neutral-900">
+                Payment Method
+              </h3>
+            </div>
+            <div className="p-5 rounded-2xl bg-neutral-50 border border-neutral-900/20 flex items-center justify-between">
+              <div className="flex items-center gap-3.5">
+                <div className="w-5 h-5 rounded-full border-2 border-neutral-900 flex items-center justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-900" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">Cash on Delivery (COD)</h4>
-                  <p className="text-xs text-slate-400">Pay cash or UPI upon delivery at your doorstep</p>
+                  <h4 className="text-sm font-semibold text-neutral-900">Cash on Delivery (COD)</h4>
+                  <p className="text-xs text-neutral-500">Pay cash or scan QR via UPI upon delivery at doorstep</p>
                 </div>
               </div>
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                Verified
+              <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-neutral-100 text-neutral-800 border border-neutral-200">
+                Available
               </span>
             </div>
           </section>
         </div>
 
         {/* Sidebar Summary & Order Action */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-slate-900/60 border border-slate-800/80 rounded-3xl p-6 space-y-6 shadow-xl sticky top-24">
-            <h3 className="text-lg font-bold text-white pb-3 border-b border-slate-800">
-              Payment Breakdown
+        <div className="lg:col-span-1">
+          <div className="bg-white border border-neutral-200/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm sticky top-24">
+            <h3 className="text-xl font-serif font-normal text-neutral-900 pb-3 border-b border-neutral-100">
+              Order Breakdown
             </h3>
 
             {/* Price Line Items */}
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between text-slate-400">
+            <div className="space-y-3.5 text-xs text-neutral-600">
+              <div className="flex items-center justify-between">
                 <span>Items Subtotal</span>
-                <span className="font-semibold text-slate-200">
+                <span className="font-semibold text-neutral-900">
                   {formatCurrency(cartSubtotal)}
                 </span>
               </div>
 
               {appliedCoupon && (
-                <div className="flex items-center justify-between text-emerald-400">
-                  <span className="flex items-center gap-1.5">
-                    <SparklesIcon className="w-3.5 h-3.5" />
+                <div className="flex items-center justify-between text-neutral-900">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <SparklesIcon className="w-3.5 h-3.5 text-neutral-900" />
                     Coupon ({appliedCoupon.coupon.code})
                   </span>
-                  <span className="font-semibold">
+                  <span className="font-semibold text-emerald-600">
                     -{formatCurrency(discountAmount)}
                   </span>
                 </div>
               )}
 
-              <div className="flex items-center justify-between text-slate-400">
+              <div className="flex items-center justify-between">
                 <span>Shipping Fee</span>
-                <span className="font-semibold text-emerald-400">Free</span>
+                <span className="font-semibold text-neutral-900">Complimentary</span>
               </div>
             </div>
 
             {/* Coupon Application */}
-            <div className="pt-3 border-t border-slate-800">
+            <div className="pt-4 border-t border-neutral-100">
               {appliedCoupon ? (
-                <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                <div className="flex items-center justify-between p-3 rounded-2xl bg-neutral-50 border border-neutral-200 text-neutral-900 text-xs font-semibold">
                   <span>Applied: {appliedCoupon.coupon.code}</span>
                   <button
                     type="button"
                     onClick={() => setAppliedCoupon(null)}
-                    className="p-1 hover:text-white"
+                    className="p-1 text-neutral-400 hover:text-neutral-900"
                   >
                     <CloseIcon className="w-4 h-4" />
                   </button>
@@ -253,30 +262,30 @@ export default function Checkout() {
                       value={couponCodeInput}
                       onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
                       placeholder="Coupon Code"
-                      className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 uppercase placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                      className="flex-1 bg-[#FAF9F6] border border-neutral-200 rounded-full px-4 py-2.5 text-xs text-neutral-900 uppercase placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:bg-white transition"
                     />
                     <button
                       type="submit"
                       disabled={couponLoading || !couponCodeInput.trim()}
-                      className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-indigo-600 disabled:opacity-40 text-xs font-semibold text-white transition"
+                      className="px-5 py-2.5 rounded-full bg-neutral-900 hover:bg-neutral-800 disabled:opacity-40 text-xs font-semibold uppercase tracking-wider text-white transition shadow-sm"
                     >
                       {couponLoading ? "..." : "Apply"}
                     </button>
                   </div>
                   {couponError && (
-                    <p className="text-[11px] text-rose-400">{couponError}</p>
+                    <p className="text-[11px] text-rose-500 font-medium">{couponError}</p>
                   )}
                 </form>
               )}
             </div>
 
             {/* Final Total */}
-            <div className="pt-4 border-t border-slate-800 flex items-baseline justify-between">
+            <div className="pt-4 border-t border-neutral-100 flex items-baseline justify-between">
               <div>
-                <span className="text-base font-bold text-white">Final Payable</span>
-                <p className="text-xs text-slate-500">Includes all taxes</p>
+                <span className="text-sm font-semibold text-neutral-900">Final Payable</span>
+                <p className="text-[11px] text-neutral-400">Includes all duties & taxes</p>
               </div>
-              <span className="text-2xl font-extrabold text-white tracking-tight">
+              <span className="text-2xl font-serif font-normal text-neutral-900 tracking-tight">
                 {formatCurrency(finalTotal)}
               </span>
             </div>
@@ -286,7 +295,7 @@ export default function Checkout() {
               type="button"
               onClick={handlePlaceOrder}
               disabled={checkoutLoading || !selectedAddressId}
-              className="w-full py-3.5 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:cursor-not-allowed text-white font-semibold text-sm transition shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2"
+              className="w-full py-4 px-6 rounded-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed text-white font-semibold text-xs uppercase tracking-widest transition shadow-sm flex items-center justify-center gap-2"
             >
               {checkoutLoading ? (
                 <>
@@ -294,19 +303,19 @@ export default function Checkout() {
                   <span>Placing Order...</span>
                 </>
               ) : (
-                <span>Place Order with COD</span>
+                <span>Confirm & Dispatch</span>
               )}
             </button>
 
             {/* Guarantees */}
-            <div className="flex items-center justify-center gap-4 text-xs text-slate-500 pt-2">
-              <div className="flex items-center gap-1">
-                <ShieldCheckIcon className="w-4 h-4 text-indigo-400" />
-                <span>100% Genuine</span>
+            <div className="flex items-center justify-center gap-4 text-[11px] text-neutral-400 pt-2">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheckIcon className="w-4 h-4 text-neutral-800" />
+                <span>Curated Guarantee</span>
               </div>
-              <div className="flex items-center gap-1">
-                <TruckIcon className="w-4 h-4 text-cyan-400" />
-                <span>Zero Shipping Fee</span>
+              <div className="flex items-center gap-1.5">
+                <TruckIcon className="w-4 h-4 text-neutral-800" />
+                <span>Insured Express</span>
               </div>
             </div>
           </div>

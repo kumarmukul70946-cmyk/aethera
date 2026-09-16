@@ -29,6 +29,12 @@ router.post(
   authController.login
 );
 
+router.post(
+  "/google",
+  authRateLimiter,
+  authController.googleLogin
+);
+
 // Protected routes (Customer & Admin)
 router.post("/logout", protect, authController.logout);
 router.get("/me", protect, authController.getMe);

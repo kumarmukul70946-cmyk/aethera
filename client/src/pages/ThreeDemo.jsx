@@ -260,18 +260,18 @@ export default function ThreeDemo() {
               {/* Viewport Floating Watermark Top-Left */}
               <div className="absolute top-4 left-4 pointer-events-none flex flex-col gap-1.5 z-10">
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-semibold tracking-wide text-neutral-800 bg-white/90 px-3 py-1 rounded-full border border-neutral-200/80 shadow-xs backdrop-blur-md">
+                  <span className="text-[11px] font-semibold tracking-wide text-neutral-800 bg-white/80 px-3 py-1 rounded-full border border-neutral-200/60 shadow-xs backdrop-blur-xl">
                     R3F Canvas • 60 FPS • WebGL 2.0
                   </span>
-                  <span className="text-[11px] font-bold text-neutral-800 bg-white/90 px-3 py-1 rounded-full border border-neutral-200/80 shadow-xs backdrop-blur-md flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-neutral-800 bg-white/80 px-3 py-1 rounded-full border border-neutral-200/60 shadow-xs backdrop-blur-xl flex items-center gap-1">
                     <span className="text-xs">🔄</span> 360° View
                   </span>
                 </div>
               </div>
 
-              {/* Gesture Controls Pill Bottom-Center */}
+              {/* Gesture Controls Pill Bottom-Center with subtle glass styling */}
               <div className="absolute bottom-5 left-1/2 -translate-x-1/2 pointer-events-none z-10">
-                <div className="px-5 py-2 rounded-full bg-white/95 border border-neutral-200/90 shadow-md backdrop-blur-md flex items-center gap-4 text-xs text-neutral-700">
+                <div className="px-5 py-2 rounded-full bg-white/80 border border-white/70 shadow-lg backdrop-blur-xl flex items-center gap-4 text-xs text-neutral-700 transition-all duration-300">
                   <span className="flex items-center gap-1.5 font-medium">
                     <span className="w-2 h-2 rounded-full bg-neutral-900 animate-pulse" />
                     <strong>Left Drag</strong> Rotate

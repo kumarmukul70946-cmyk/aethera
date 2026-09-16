@@ -1,8 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { CubeIcon, ArrowRightIcon, StarIcon } from "../common/Icons.jsx";
+import useParallax from "../../hooks/useParallax.js";
 
 export default function HeroSection() {
+  const { ref: heroImageRef, offsetY: heroOffset } = useParallax(16);
+
   return (
     <section className="relative overflow-hidden pt-6 sm:pt-10 pb-12 sm:pb-16 bg-[#FAF9F6]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,18 +39,17 @@ export default function HeroSection() {
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
               <Link
                 to="/products"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs sm:text-sm font-bold tracking-wide transition shadow-sm"
+                className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs sm:text-sm font-bold tracking-wide transition shadow-sm"
               >
                 <span>Shop Now</span>
-                <ArrowRightIcon className="w-4 h-4" />
+                <span className="btn-arrow"><ArrowRightIcon className="w-4 h-4" /></span>
               </Link>
 
               <Link
-                to="/3d-demo"
+                to="/categories"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-neutral-50 text-neutral-900 border border-neutral-300 text-xs sm:text-sm font-semibold transition shadow-xs"
               >
-                <CubeIcon className="w-4 h-4 text-neutral-700" />
-                <span>Explore in 3D</span>
+                <span>Explore Categories</span>
               </Link>
             </div>
 
@@ -85,13 +87,17 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Right Column: Hero Visual with Editorial Accent */}
-          <div className="lg:col-span-6 relative">
+          {/* Right Column: Hero Visual with Editorial Accent and Subtle Parallax */}
+          <div ref={heroImageRef} className="lg:col-span-6 relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-neutral-100 aspect-[4/3] group border border-neutral-200/60">
               <img
                 src="/images/hero_headphones.jpg"
                 alt="Premium wireless headphones on stone pedestal with book"
-                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                style={{
+                  transform: `translate3d(0, ${heroOffset}px, 0)`,
+                  transition: "transform 100ms ease-out"
+                }}
+                className="w-full h-full object-cover object-center scale-105 group-hover:scale-110 transition-transform duration-700 ease-out"
               />
 
               {/* Editorial script text overlay (matching 'Good Things Take Time') */}
@@ -114,3 +120,4 @@ export default function HeroSection() {
     </section>
   );
 }
+

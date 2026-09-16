@@ -37,6 +37,9 @@ export const getProducts = async (params = {}) => {
     rating,
     sort,
     isFeatured,
+    discount,
+    minDiscount,
+    hasDiscount,
     includeInactive = false
   } = params;
 
@@ -56,6 +59,17 @@ export const getProducts = async (params = {}) => {
   // Featured flag
   if (isFeatured !== undefined) {
     filter.isFeatured = isFeatured === true || isFeatured === "true";
+  }
+
+  // Discount / Deals filter
+  if (discount === true || discount === "true" || hasDiscount === true || hasDiscount === "true") {
+    if (minDiscount && !isNaN(Number(minDiscount)) && Number(minDiscount) > 0) {
+      filter.discount = { $gte: Number(minDiscount) };
+    } else {
+      filter.discount = { $gt: 0 };
+    }
+  } else if (minDiscount && !isNaN(Number(minDiscount)) && Number(minDiscount) > 0) {
+    filter.discount = { $gte: Number(minDiscount) };
   }
 
   // Category filter: Supports MongoDB ObjectId or Category slug
@@ -107,6 +121,20 @@ export const getProducts = async (params = {}) => {
     filter.rating = { $gte: Number(rating) };
   }
 
+  // Discount / Deals filter
+  const isDiscountRequested =
+    discount === true ||
+    discount === "true" ||
+    discount === "1" ||
+    hasDiscount === true ||
+    hasDiscount === "true";
+
+  if (minDiscount !== undefined && !isNaN(Number(minDiscount))) {
+    filter.discount = { $gte: Math.max(Number(minDiscount), 1) };
+  } else if (isDiscountRequested) {
+    filter.discount = { $gt: 0 };
+  }
+
   // Keyword search across name, brand, description, and tags
   if (search && search.trim()) {
     const keywordRegex = new RegExp(escapeRegex(search.trim()), "i");
@@ -135,6 +163,9 @@ export const getProducts = async (params = {}) => {
       break;
     case "popular":
       sortOption = { salesCount: -1, rating: -1, createdAt: -1 };
+      break;
+    case "discount_desc":
+      sortOption = { discount: -1, finalPrice: 1 };
       break;
     default:
       sortOption = { createdAt: -1 };

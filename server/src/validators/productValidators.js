@@ -179,10 +179,15 @@ export const productQueryValidator = [
     .isFloat({ min: 0, max: 5 })
     .withMessage("Rating must be between 0 and 5"),
 
+  query("minDiscount")
+    .optional()
+    .isFloat({ min: 0, max: 100 })
+    .withMessage("minDiscount must be between 0 and 100"),
+
   query("sort")
     .optional()
-    .isIn(["price_asc", "price_desc", "rating", "newest", "popular"])
-    .withMessage("Sort must be one of: price_asc, price_desc, rating, newest, popular")
+    .isIn(["price_asc", "price_desc", "rating", "newest", "popular", "discount_desc"])
+    .withMessage("Sort must be one of: price_asc, price_desc, rating, newest, popular, discount_desc")
 ];
 
 /**

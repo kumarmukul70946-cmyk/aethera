@@ -33,9 +33,9 @@ export default function Wishlist() {
 
   if (loading && items.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-sm text-slate-400">Loading your wishlist...</p>
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <div className="w-10 h-10 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-sm font-medium text-neutral-500">Loading your wishlist...</p>
       </div>
     );
   }
@@ -54,19 +54,19 @@ export default function Wishlist() {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center p-12 bg-slate-900/40 border border-slate-800 rounded-3xl space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
-            <HeartIcon className="w-8 h-8" />
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center p-12 sm:p-16 bg-white border border-neutral-200/80 rounded-3xl shadow-sm space-y-5">
+          <div className="w-16 h-16 rounded-full bg-neutral-100 text-neutral-800 flex items-center justify-center mx-auto">
+            <HeartIcon className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl font-bold text-white">Your wishlist is empty</h2>
-          <p className="text-sm text-slate-400 max-w-sm mx-auto">
-            Save items you love here and easily move them to your cart when ready to purchase.
+          <h2 className="text-3xl font-serif font-normal text-neutral-900">Your wishlist is empty</h2>
+          <p className="text-sm text-neutral-500 max-w-md mx-auto leading-relaxed">
+            Curate pieces you adore and revisit them here anytime, or transfer directly into your shopping bag.
           </p>
-          <div className="pt-2">
+          <div className="pt-4">
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition shadow-lg shadow-indigo-600/25"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold uppercase tracking-wider transition shadow-sm"
             >
               Discover Products
             </Link>
@@ -77,14 +77,15 @@ export default function Wishlist() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
       {/* Title */}
-      <div className="pb-6 border-b border-slate-800 mb-8">
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">
+      <div className="pb-6 border-b border-neutral-200/80 mb-8">
+        <span className="text-xs font-semibold tracking-widest uppercase text-neutral-400">Curated Favorites</span>
+        <h1 className="text-3xl sm:text-4xl font-serif font-normal text-neutral-900 tracking-tight mt-1">
           Saved Wishlist
         </h1>
-        <p className="text-xs text-slate-400 mt-1">
-          {items.length} {items.length === 1 ? "item" : "items"} saved for later
+        <p className="text-sm text-neutral-500 mt-1">
+          {items.length} {items.length === 1 ? "piece" : "pieces"} saved for consideration
         </p>
       </div>
 
@@ -108,16 +109,16 @@ export default function Wishlist() {
           return (
             <div
               key={product._id}
-              className="group bg-slate-900/50 hover:bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between transition shadow-sm hover:shadow-xl"
+              className="group bg-white hover:border-neutral-300 border border-neutral-200/80 rounded-3xl p-4 flex flex-col justify-between transition-all duration-300 shadow-sm hover:shadow-md"
             >
               <div>
                 {/* Image */}
-                <div className="relative aspect-square bg-slate-950 rounded-xl overflow-hidden mb-3 flex items-center justify-center">
+                <div className="relative aspect-square bg-[#FAF9F6] rounded-2xl overflow-hidden mb-3 flex items-center justify-center">
                   {primaryImage ? (
                     <img
                       src={primaryImage}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                     />
                   ) : (
                     <span className="text-3xl">✨</span>
@@ -127,7 +128,7 @@ export default function Wishlist() {
                   <button
                     type="button"
                     onClick={() => handleRemove(product._id)}
-                    className="absolute top-2 right-2 p-1.5 rounded-lg bg-slate-950/80 text-slate-400 hover:text-rose-400 backdrop-blur-md transition"
+                    className="absolute top-2.5 right-2.5 p-1.5 rounded-full bg-white/90 text-neutral-400 hover:text-rose-600 shadow-sm transition"
                     aria-label="Remove from wishlist"
                   >
                     <CloseIcon className="w-4 h-4" />
@@ -135,27 +136,27 @@ export default function Wishlist() {
                 </div>
 
                 {/* Info */}
-                <div className="space-y-1 mb-3">
-                  <div className="flex items-center justify-between text-xs text-slate-400">
-                    <span className="font-bold text-indigo-400 uppercase text-[10px]">
+                <div className="space-y-1 mb-4 px-1">
+                  <div className="flex items-center justify-between text-xs text-neutral-400">
+                    <span className="font-semibold uppercase text-[10px] tracking-wider text-neutral-400">
                       {product.brand || "Aethera"}
                     </span>
-                    <div className="flex items-center gap-1 text-amber-400">
+                    <div className="flex items-center gap-1 text-neutral-700 font-medium text-xs">
                       <StarIcon className="w-3 h-3 fill-amber-400 text-amber-400" />
-                      <span>{product.rating ? product.rating.toFixed(1) : "4.5"}</span>
+                      <span>{product.rating ? product.rating.toFixed(1) : "4.8"}</span>
                     </div>
                   </div>
 
-                  <h3 className="font-semibold text-sm text-slate-100 line-clamp-1 hover:text-indigo-300">
+                  <h3 className="font-medium text-sm text-neutral-900 line-clamp-1 hover:text-neutral-600 transition">
                     <Link to={productUrl}>{product.name}</Link>
                   </h3>
 
                   <div className="flex items-baseline gap-2 pt-1">
-                    <span className="font-bold text-base text-white">
+                    <span className="font-serif font-medium text-base text-neutral-900">
                       {formatCurrency(finalPrice)}
                     </span>
                     {hasDiscount && (
-                      <span className="text-xs text-slate-500 line-through">
+                      <span className="text-xs text-neutral-400 line-through">
                         {formatCurrency(product.price)}
                       </span>
                     )}
@@ -164,11 +165,11 @@ export default function Wishlist() {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-3 border-t border-slate-800/80 flex gap-2">
+              <div className="pt-3 border-t border-neutral-100 flex gap-2">
                 <button
                   type="button"
                   onClick={() => handleMoveToCart(product._id)}
-                  className="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-sm"
+                  className="flex-1 py-2.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 transition shadow-sm"
                 >
                   <CartIcon className="w-3.5 h-3.5" />
                   <span>Move to Cart</span>
@@ -176,7 +177,7 @@ export default function Wishlist() {
 
                 <Link
                   to={productUrl}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition"
+                  className="p-2.5 rounded-full border border-neutral-200 hover:bg-neutral-50 text-neutral-700 transition flex items-center justify-center"
                   aria-label="View product"
                 >
                   <EyeIcon className="w-4 h-4" />

@@ -91,23 +91,35 @@ export default function PopularBrands() {
         </div>
         <Link
           to="/products"
-          className="text-xs font-semibold text-neutral-900 hover:text-neutral-600 transition flex items-center gap-1"
+          className="group text-xs font-semibold text-neutral-900 hover:text-neutral-600 transition flex items-center gap-1.5"
         >
           <span>View All Brands</span>
-          <span className="text-sm">→</span>
+          <span className="text-sm btn-arrow">→</span>
         </Link>
       </div>
 
-      {/* 8 Brand Cards Grid */}
+      {/* 8 Brand Cards Grid with Staggered Scroll Blur-to-Sharp Reveal & Glass Hover */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4">
         {BRANDS.map((brand, i) => (
           <motion.div
             key={i}
-            whileHover={{ y: -2 }}
-            transition={{ duration: 0.2 }}
-            className="h-20 bg-white rounded-2xl border border-neutral-100 shadow-xs hover:shadow-sm hover:border-neutral-300 transition flex items-center justify-center p-3 text-neutral-800 group cursor-pointer"
+            initial={{ opacity: 0.35, filter: "blur(5px)", y: 20 }}
+            whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+            viewport={{ once: false, margin: "-40px" }}
+            transition={{
+              duration: 0.7,
+              delay: i * 0.07, // 0ms, 70ms, 140ms, 210ms, 280ms, 350ms, 420ms, 490ms
+              ease: [0.22, 1, 0.36, 1]
+            }}
+            whileHover={{
+              y: -5,
+              scale: 1.02,
+              transition: { duration: 0.25, ease: "easeOut" }
+            }}
+            whileTap={{ scale: 0.98 }}
+            className="h-20 bg-white hover:bg-white/85 hover:backdrop-blur-md rounded-2xl border border-neutral-100 hover:border-neutral-300 shadow-xs hover:shadow-md transition-colors duration-300 flex items-center justify-center p-3 text-neutral-800 group cursor-pointer"
           >
-            <div className="opacity-80 group-hover:opacity-100 transition flex items-center justify-center">
+            <div className="opacity-80 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
               {brand.svg}
             </div>
           </motion.div>

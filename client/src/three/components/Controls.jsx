@@ -30,7 +30,8 @@ export const Controls = forwardRef(function Controls(
       ref={ref}
       makeDefault
       enableDamping
-      dampingFactor={0.05}
+      dampingFactor={0.04}
+      rotateSpeed={0.85}
       autoRotate={autoRotate}
       autoRotateSpeed={autoRotateSpeed}
       enableZoom={enableZoom}

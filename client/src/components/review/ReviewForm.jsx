@@ -68,35 +68,31 @@ export default function ReviewForm({ productId, existingReview = null, onSuccess
         );
       }
 
-      if (submitReview.fulfilled.match(resultAction) || updateExistingReview.fulfilled.match(resultAction)) {
+      if (
+        (isEditing && updateExistingReview.fulfilled.match(resultAction)) ||
+        (!isEditing && submitReview.fulfilled.match(resultAction))
+      ) {
+        if (!isEditing) setComment("");
         if (onSuccess) onSuccess();
       } else {
-        setServerError(resultAction.payload?.message || "Failed to submit review.");
+        setServerError(resultAction.payload?.message || "Failed to submit review. Please try again.");
       }
     } catch (err) {
-      setServerError("An unexpected error occurred while saving your review.");
+      setServerError("An unexpected error occurred.");
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-6 animate-in fade-in"
-    >
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-        <div>
-          <h3 className="text-base font-bold text-white">
-            {isEditing ? "Edit Your Review" : "Write a Verified Review"}
-          </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Share your authentic experience with this product to assist other collectors.
-          </p>
-        </div>
+    <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-white border border-neutral-200/80 shadow-sm space-y-5 text-neutral-900">
+      <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
+        <h4 className="font-bold text-base text-neutral-900">
+          {isEditing ? "Edit Your Review" : "Write a Customer Review"}
+        </h4>
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="text-xs text-slate-400 hover:text-white transition"
+            className="text-xs text-neutral-400 hover:text-neutral-900 font-semibold"
           >
             Cancel
           </button>
@@ -105,19 +101,19 @@ export default function ReviewForm({ productId, existingReview = null, onSuccess
 
       {/* Errors */}
       {validationError && (
-        <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-medium">
+        <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-medium">
           {validationError}
         </div>
       )}
       {serverError && (
-        <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-medium">
+        <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-medium">
           {serverError}
         </div>
       )}
 
       {/* Star Selector */}
       <div>
-        <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+        <label className="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">
           Your Rating
         </label>
         <div className="flex items-center gap-4">
@@ -127,7 +123,7 @@ export default function ReviewForm({ productId, existingReview = null, onSuccess
             onChange={(r) => setRating(r)}
             size="lg"
           />
-          <span className="text-xs font-bold text-amber-400">
+          <span className="text-xs font-bold text-neutral-900 bg-neutral-100 px-3 py-1 rounded-full">
             {RATING_LABELS[rating]}
           </span>
         </div>
@@ -138,17 +134,17 @@ export default function ReviewForm({ productId, existingReview = null, onSuccess
         <div className="flex items-center justify-between mb-2">
           <label
             htmlFor="review-comment"
-            className="block text-xs font-semibold text-slate-300 uppercase tracking-wider"
+            className="block text-xs font-semibold text-neutral-700 uppercase tracking-wider"
           >
             Review Comment
           </label>
           <span
             className={`text-[11px] font-mono ${
               comment.length > 900
-                ? "text-rose-400"
+                ? "text-rose-600"
                 : comment.length >= 5
-                ? "text-slate-400"
-                : "text-amber-400"
+                ? "text-neutral-400"
+                : "text-amber-600"
             }`}
           >
             {comment.length} / 1000
@@ -162,7 +158,7 @@ export default function ReviewForm({ productId, existingReview = null, onSuccess
           placeholder="How was the product quality, packaging, and performance? What should future buyers know?"
           maxLength={1000}
           required
-          className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none"
+          className="w-full px-4 py-3 rounded-2xl bg-neutral-50 border border-neutral-200 text-neutral-900 text-xs sm:text-sm placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:bg-white transition resize-none"
         />
       </div>
 
@@ -173,7 +169,7 @@ export default function ReviewForm({ productId, existingReview = null, onSuccess
             type="button"
             onClick={onCancel}
             disabled={submitting}
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition"
+            className="px-4 py-2 rounded-full text-xs font-semibold text-neutral-500 hover:text-neutral-900 transition"
           >
             Cancel
           </button>
@@ -181,7 +177,7 @@ export default function ReviewForm({ productId, existingReview = null, onSuccess
         <button
           type="submit"
           disabled={submitting || comment.trim().length < 5}
-          className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white text-xs font-bold transition shadow-lg shadow-indigo-600/25 flex items-center gap-2"
+          className="px-6 py-2.5 rounded-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed text-white text-xs font-semibold transition shadow-sm flex items-center gap-2"
         >
           {submitting && (
             <div className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />

@@ -2,11 +2,7 @@ import React from "react";
 import { AlertCircleIcon, RefreshIcon } from "./Icons.jsx";
 
 /**
- * Reusable error state component.
- * @param {Object} props
- * @param {string} [props.title="Unable to load content"]
- * @param {string} [props.message="An error occurred while fetching data from the server."]
- * @param {Function} [props.onRetry]
+ * Reusable error state component — Warm-light Japandi style.
  */
 export default function ErrorState({
   title = "Unable to load content",
@@ -14,13 +10,13 @@ export default function ErrorState({
   onRetry
 }) {
   return (
-    <div className="flex flex-col items-center justify-center text-center p-12 bg-rose-950/20 border border-rose-900/40 rounded-3xl my-8">
-      <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mb-5">
-        <AlertCircleIcon className="w-8 h-8" />
+    <div className="flex flex-col items-center justify-center text-center p-10 bg-white border border-rose-200/80 rounded-3xl my-8 shadow-sm">
+      <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 text-rose-500 flex items-center justify-center mb-4">
+        <AlertCircleIcon className="w-6 h-6" />
       </div>
 
-      <h3 className="text-xl font-bold text-slate-100 mb-2">{title}</h3>
-      <p className="text-slate-400 max-w-md text-sm mb-6 leading-relaxed">
+      <h3 className="text-xl font-bold text-neutral-900 mb-2">{title}</h3>
+      <p className="text-neutral-500 max-w-md text-xs sm:text-sm mb-6 leading-relaxed font-light">
         {message}
       </p>
 
@@ -28,10 +24,10 @@ export default function ErrorState({
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-medium text-sm transition border border-slate-700/60"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white font-semibold text-xs transition shadow-sm"
         >
-          <RefreshIcon className="w-4 h-4" />
-          Retry Request
+          <RefreshIcon className="w-3.5 h-3.5" />
+          <span>Retry Request</span>
         </button>
       )}
     </div>

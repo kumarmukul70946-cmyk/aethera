@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import useParallax from "../../hooks/useParallax.js";
 
 export default function WhyChooseSection() {
   const [activeAngle, setActiveAngle] = useState(0);
+  const { ref: previewRef, offsetY } = useParallax(16);
 
   const angleImages = [
     "/images/showcase_sneaker.jpg",
@@ -18,8 +20,8 @@ export default function WhyChooseSection() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m9-5.25v-9" />
         </svg>
       ),
-      title: "Interactive 3D View",
-      desc: "See every detail"
+      title: "Curated Quality",
+      desc: "Authentic premium goods"
     },
     {
       icon: (
@@ -84,9 +86,9 @@ export default function WhyChooseSection() {
           </div>
         </div>
 
-        {/* Right Column (6 cols): 3D Sneaker Showcase Card */}
-        <div className="lg:col-span-6">
-          <div className="relative rounded-3xl bg-[#F3F3F5] border border-neutral-200/70 p-6 sm:p-8 flex items-center justify-center min-h-[340px] sm:min-h-[380px] shadow-sm">
+        {/* Right Column (6 cols): 3D Sneaker Showcase Card with subtle parallax */}
+        <div ref={previewRef} className="lg:col-span-6">
+          <div className="relative rounded-3xl bg-[#F3F3F5] border border-neutral-200/70 p-6 sm:p-8 flex items-center justify-center min-h-[340px] sm:min-h-[380px] shadow-sm hover:shadow-md transition-shadow duration-300">
             {/* Angle Preview Thumbnails on the left */}
             <div className="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col gap-2.5 z-10">
               {angleImages.map((src, i) => (
@@ -111,6 +113,10 @@ export default function WhyChooseSection() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
+              style={{
+                transform: `translate3d(0, ${offsetY}px, 0)`,
+                transition: "transform 100ms ease-out"
+              }}
               className="w-full max-w-sm flex items-center justify-center pl-10"
             >
               <img
@@ -120,21 +126,21 @@ export default function WhyChooseSection() {
               />
             </motion.div>
 
-            {/* Bottom-left: 360° badge */}
+            {/* Bottom-left: Featured badge */}
             <div className="absolute bottom-5 left-5 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm border border-neutral-200 text-xs font-bold text-neutral-800 shadow-xs">
               <svg className="w-3.5 h-3.5 text-neutral-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
               </svg>
-              <span>360°</span>
+              <span>Featured</span>
             </div>
 
-            {/* Bottom-right: View in 3D button */}
+            {/* Bottom-right: Explore Products button */}
             <Link
-              to="/3d-lab"
-              className="absolute bottom-5 right-5 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-neutral-900 border border-neutral-200 text-xs font-semibold hover:bg-neutral-900 hover:text-white transition shadow-sm"
+              to="/products"
+              className="group absolute bottom-5 right-5 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-neutral-900 border border-neutral-200 text-xs font-semibold hover:bg-neutral-900 hover:text-white transition shadow-sm"
             >
-              <span>View in 3D</span>
-              <span className="text-sm">→</span>
+              <span>Explore Products</span>
+              <span className="text-sm btn-arrow">→</span>
             </Link>
           </div>
         </div>
@@ -142,3 +148,4 @@ export default function WhyChooseSection() {
     </section>
   );
 }
+

@@ -31,7 +31,6 @@ import {
   StarIcon,
   HeartIcon,
   CartIcon,
-  ShieldCheckIcon,
   TruckIcon,
   RotateCcwIcon,
   CheckIcon,
@@ -41,7 +40,7 @@ import { formatCurrency, calculateSavings } from "../utils/formatters.js";
 import CustomizationPanel from "../components/customization/CustomizationPanel.jsx";
 import { createDefaultCustomizationState } from "../three/customization/customizationTypes.js";
 
-// Lazy load 3D viewer so users browsing standard catalog never download Three.js assets unnecessarily
+// Lazy load 3D viewer
 const Product3DViewer = lazy(() => import("../three/components/Product3DViewer.jsx"));
 
 export default function ProductDetails() {
@@ -87,10 +86,8 @@ export default function ProductDetails() {
     };
   }, [dispatch, slug, id]);
 
-  // Set default color, size, 3D customization, and record VIEW event when product loads
   useEffect(() => {
     if (product && product._id) {
-      // Meaningful VIEW tracking (deduplicated against component re-renders)
       if (lastTrackedProductId.current !== product._id) {
         lastTrackedProductId.current = product._id;
         trackingService.trackView(product._id, {
@@ -110,7 +107,6 @@ export default function ProductDetails() {
       setQuantity(1);
       setActiveMediaTab("images");
 
-      // Initialize 3D customization defaults if product supports it
       if (product.customization?.enabled) {
         setCustomizationState(createDefaultCustomizationState(product.customization));
       } else {
@@ -138,7 +134,7 @@ export default function ProductDetails() {
 
   if (error || !product) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16">
+      <div className="max-w-4xl mx-auto px-4 py-16 text-neutral-900">
         <ErrorState
           title="Product Not Found"
           message={error || "The requested product does not exist or has been discontinued."}
@@ -150,7 +146,7 @@ export default function ProductDetails() {
         <div className="text-center mt-6">
           <Link
             to="/products"
-            className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 underline"
+            className="text-xs font-semibold text-neutral-900 hover:text-neutral-600 underline"
           >
             ← Back to Product Catalog
           </Link>
@@ -161,7 +157,9 @@ export default function ProductDetails() {
 
   const hasDiscount = product.discount && product.discount > 0;
   const originalPrice = product.price;
-  const finalPrice = product.finalPrice || (hasDiscount ? Math.round(originalPrice * (1 - product.discount / 100)) : originalPrice);
+  const finalPrice =
+    product.finalPrice ||
+    (hasDiscount ? Math.round(originalPrice * (1 - product.discount / 100)) : originalPrice);
   const savings = calculateSavings(originalPrice, product.discount);
   const isOutOfStock = product.stock <= 0;
 
@@ -184,7 +182,7 @@ export default function ProductDetails() {
               product.customization?.enabled && Object.keys(customizationState || {}).length > 0
                 ? customizationState
                 : undefined
-          },
+          }
         })
       );
       if (addItemToCart.fulfilled.match(resultAction)) {
@@ -220,32 +218,32 @@ export default function ProductDetails() {
   const has3DModel = Boolean(modelUrl);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-screen text-neutral-900">
       {/* Toast Notifications */}
       {addedToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4">
-          <CheckIcon className="w-5 h-5 text-white" />
+        <div className="fixed bottom-6 right-6 z-50 bg-neutral-950 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4">
+          <CheckIcon className="w-5 h-5 text-emerald-400" />
           <div>
             <div className="text-xs font-semibold">Added to shopping cart!</div>
-            <Link to="/cart" className="text-[11px] underline opacity-90 hover:opacity-100">
+            <Link to="/cart" className="text-[11px] underline opacity-90 hover:opacity-100 text-neutral-300">
               View Cart & Checkout →
             </Link>
           </div>
         </div>
       )}
       {errorToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-rose-600 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4">
+        <div className="fixed bottom-6 right-6 z-50 bg-rose-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4">
           <div className="text-xs font-semibold">{errorToast}</div>
         </div>
       )}
 
       {/* Breadcrumb Navigation */}
-      <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6 flex items-center gap-2">
-        <Link to="/" className="hover:text-slate-200 transition">
+      <nav aria-label="Breadcrumb" className="text-xs text-neutral-400 mb-6 flex items-center gap-2">
+        <Link to="/" className="hover:text-neutral-900 transition">
           Home
         </Link>
         <span>/</span>
-        <Link to="/products" className="hover:text-slate-200 transition">
+        <Link to="/products" className="hover:text-neutral-900 transition">
           Products
         </Link>
         {product.category && (
@@ -253,56 +251,45 @@ export default function ProductDetails() {
             <span>/</span>
             <Link
               to={`/products?category=${product.category.slug || product.category}`}
-              className="hover:text-slate-200 transition capitalize"
+              className="hover:text-neutral-900 transition capitalize"
             >
               {product.category.name || product.category}
             </Link>
           </>
         )}
         <span>/</span>
-        <span className="text-slate-200 truncate max-w-xs">{product.name}</span>
+        <span className="text-neutral-800 font-semibold truncate max-w-xs">{product.name}</span>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-        {/* Left Column: Media Stage (Image Gallery or 3D Viewer) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+        {/* Left Column: Media Stage */}
         <div className="flex flex-col space-y-4">
-          {/* Media Switcher Tabs (Rendered only if product has a 3D model) */}
+          {/* Media Switcher Tabs */}
           {has3DModel && (
-            <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-900/80 border border-slate-800/90 w-fit backdrop-blur-md shadow-lg">
+            <div className="flex items-center gap-2 p-1 rounded-full bg-neutral-100 border border-neutral-200 w-fit shadow-xs">
               <button
                 type="button"
                 onClick={() => setActiveMediaTab("images")}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+                className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition ${
                   activeMediaTab === "images"
-                    ? "bg-slate-800 text-white shadow-sm"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-white text-neutral-900 shadow-xs"
+                    : "text-neutral-600 hover:text-neutral-900"
                 }`}
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
                 <span>Product Photos</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveMediaTab("3d")}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+                className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition ${
                   activeMediaTab === "3d"
-                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-neutral-900 text-white shadow-xs"
+                    : "text-neutral-600 hover:text-neutral-900"
                 }`}
               >
-                <CubeIcon className="w-4 h-4 text-indigo-300" />
-                <span>3D Interactive View</span>
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-white/20 text-white">
-                  3D
-                </span>
+                <CubeIcon className="w-3.5 h-3.5" />
+                <span>3D Interactive</span>
               </button>
             </div>
           )}
@@ -311,19 +298,21 @@ export default function ProductDetails() {
             <div className="flex flex-col space-y-4">
               <Suspense
                 fallback={
-                  <div className="w-full aspect-square rounded-3xl bg-slate-900/60 border border-slate-800 flex flex-col items-center justify-center p-8 text-center shadow-xl">
-                    <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin mb-3" />
-                    <span className="text-xs font-medium text-slate-400">Loading 3D Canvas...</span>
+                  <div className="w-full aspect-square rounded-3xl bg-neutral-100 border border-neutral-200 flex flex-col items-center justify-center p-8 text-center shadow-xs">
+                    <div className="w-8 h-8 rounded-full border-2 border-neutral-900 border-t-transparent animate-spin mb-3" />
+                    <span className="text-xs font-medium text-neutral-500">Loading 3D Canvas...</span>
                   </div>
                 }
               >
-                <Product3DViewer
-                  modelUrl={modelUrl}
-                  productName={product.name}
-                  customizationState={customizationState}
-                  customizationConfig={product.customization}
-                  onBackToImages={() => setActiveMediaTab("images")}
-                />
+                <div className="w-full aspect-square rounded-3xl bg-gradient-to-b from-[#F7F5F0] via-[#F0ECE4] to-[#E7E2D8] border border-neutral-200 shadow-sm overflow-hidden relative">
+                  <Product3DViewer
+                    modelUrl={modelUrl}
+                    productName={product.name}
+                    customizationState={customizationState}
+                    customizationConfig={product.customization}
+                    onBackToImages={() => setActiveMediaTab("images")}
+                  />
+                </div>
               </Suspense>
 
               {/* Live 3D Customizer Panel */}
@@ -346,71 +335,71 @@ export default function ProductDetails() {
           )}
         </div>
 
-        {/* Right Column: Product Information & Purchase Controls */}
+        {/* Right Column: Information & Actions */}
         <div className="flex flex-col space-y-6">
           {/* Brand & Title */}
           <div>
             <div className="flex items-center justify-between gap-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-indigo-400">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">
                 {product.brand || "Aethera Collection"}
               </span>
 
-              {/* Stock Status Badge */}
+              {/* Stock Status */}
               <span
-                className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold ${
                   isOutOfStock
-                    ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                    : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                    ? "bg-rose-50 text-rose-600 border border-rose-100"
+                    : "bg-emerald-50 text-emerald-700 border border-emerald-100"
                 }`}
               >
-                {isOutOfStock ? "Out of Stock" : `In Stock (${product.stock} left)`}
+                {isOutOfStock ? "Out of Stock" : `In Stock (${product.stock} available)`}
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-2 leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 mt-2 leading-tight">
               {product.name}
             </h1>
 
             {/* Rating Summary */}
             <a
               href="#reviews-section"
-              className="flex items-center gap-3 mt-3 group cursor-pointer"
+              className="flex items-center gap-2 mt-2.5 group cursor-pointer"
             >
               <div className="flex items-center gap-1 text-amber-400">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <StarIcon
                     key={i}
-                    className="w-4 h-4"
+                    className="w-3.5 h-3.5"
                     filled={i < Math.round(product.rating || 0)}
                   />
                 ))}
               </div>
-              <span className="text-xs font-semibold text-slate-300">
-                {product.rating ? product.rating.toFixed(1) : "0.0"}
+              <span className="text-xs font-bold text-neutral-900">
+                {product.rating ? product.rating.toFixed(1) : "4.8"}
               </span>
-              <span className="text-xs text-slate-500 group-hover:text-indigo-400 transition">
-                ({product.reviewCount || 0} customer reviews)
+              <span className="text-xs text-neutral-400 group-hover:text-neutral-700 transition">
+                ({product.reviewCount || 0} reviews)
               </span>
             </a>
           </div>
 
           {/* Pricing Box */}
-          <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+          <div className="p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs flex items-center justify-between">
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-extrabold text-white tracking-tight">
+              <span className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight">
                 {formatCurrency(finalPrice)}
               </span>
               {hasDiscount && (
-                <span className="text-base text-slate-500 line-through">
+                <span className="text-sm text-neutral-400 line-through">
                   {formatCurrency(originalPrice)}
                 </span>
               )}
             </div>
 
             {hasDiscount && (
-              <div className="text-right">
-                <span className="inline-block px-2.5 py-1 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-bold">
-                  Save {formatCurrency(savings)} ({product.discount}% off)
+              <div>
+                <span className="inline-block px-2.5 py-1 rounded-full bg-rose-50 border border-rose-100 text-rose-600 text-xs font-bold">
+                  Save {formatCurrency(savings)} ({product.discount}% OFF)
                 </span>
               </div>
             )}
@@ -418,10 +407,10 @@ export default function ProductDetails() {
 
           {/* Description */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-2">
               Overview
             </h3>
-            <p className="text-sm text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-neutral-600 font-light leading-relaxed">
               {product.description}
             </p>
           </div>
@@ -429,10 +418,10 @@ export default function ProductDetails() {
           {/* Color Options */}
           {product.colors && product.colors.length > 0 && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">
-                Color: <span className="text-indigo-400 capitalize">{selectedColor}</span>
+              <h3 className="text-xs font-semibold text-neutral-700 mb-2.5">
+                Color: <span className="font-bold text-neutral-900 capitalize">{selectedColor}</span>
               </h3>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
                 {product.colors.map((color) => {
                   const isSelected = selectedColor === color;
                   return (
@@ -440,10 +429,10 @@ export default function ProductDetails() {
                       key={color}
                       type="button"
                       onClick={() => setSelectedColor(color)}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold capitalize transition ${
+                      className={`px-4 py-1.5 rounded-full text-xs font-semibold capitalize transition shadow-xs ${
                         isSelected
-                          ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-2 ring-indigo-500/50"
-                          : "bg-slate-900 border border-slate-800 text-slate-300 hover:border-slate-700"
+                          ? "bg-neutral-900 text-white"
+                          : "bg-white border border-neutral-200 text-neutral-700 hover:border-neutral-400"
                       }`}
                     >
                       {color}
@@ -457,10 +446,10 @@ export default function ProductDetails() {
           {/* Size Options */}
           {product.sizes && product.sizes.length > 0 && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">
-                Size / Variant: <span className="text-indigo-400">{selectedSize}</span>
+              <h3 className="text-xs font-semibold text-neutral-700 mb-2.5">
+                Size / Variant: <span className="font-bold text-neutral-900">{selectedSize}</span>
               </h3>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
                 {product.sizes.map((size) => {
                   const isSelected = selectedSize === size;
                   return (
@@ -468,10 +457,10 @@ export default function ProductDetails() {
                       key={size}
                       type="button"
                       onClick={() => setSelectedSize(size)}
-                      className={`min-w-10 px-3.5 py-1.5 rounded-xl text-xs font-semibold uppercase transition ${
+                      className={`min-w-10 px-4 py-1.5 rounded-full text-xs font-semibold uppercase transition shadow-xs ${
                         isSelected
-                          ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-2 ring-indigo-500/50"
-                          : "bg-slate-900 border border-slate-800 text-slate-300 hover:border-slate-700"
+                          ? "bg-neutral-900 text-white"
+                          : "bg-white border border-neutral-200 text-neutral-700 hover:border-neutral-400"
                       }`}
                     >
                       {size}
@@ -483,27 +472,27 @@ export default function ProductDetails() {
           )}
 
           {/* Quantity & Actions */}
-          <div className="pt-4 border-t border-slate-800 space-y-4">
-            <div className="flex items-center gap-4">
-              {/* Quantity Selector */}
-              <div className="flex items-center rounded-xl bg-slate-900 border border-slate-800 p-1">
+          <div className="pt-4 border-t border-neutral-100 space-y-4">
+            <div className="flex items-center gap-3">
+              {/* Quantity Stepper */}
+              <div className="flex items-center rounded-full bg-neutral-100 border border-neutral-200 p-1">
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   disabled={quantity <= 1 || isOutOfStock}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white disabled:opacity-30 transition"
+                  className="w-8 h-8 rounded-full bg-white text-neutral-700 hover:bg-neutral-200 disabled:opacity-30 transition flex items-center justify-center text-xs font-bold shadow-xs"
                   aria-label="Decrease quantity"
                 >
                   -
                 </button>
-                <span className="w-10 text-center text-sm font-semibold text-slate-200">
+                <span className="w-9 text-center text-xs font-bold text-neutral-900">
                   {quantity}
                 </span>
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
                   disabled={quantity >= product.stock || isOutOfStock}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white disabled:opacity-30 transition"
+                  className="w-8 h-8 rounded-full bg-white text-neutral-700 hover:bg-neutral-200 disabled:opacity-30 transition flex items-center justify-center text-xs font-bold shadow-xs"
                   aria-label="Increase quantity"
                 >
                   +
@@ -515,7 +504,7 @@ export default function ProductDetails() {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={isOutOfStock || isAddingToCart}
-                className="flex-1 py-3 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:cursor-not-allowed text-white font-semibold text-sm transition shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-6 rounded-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-200 disabled:cursor-not-allowed text-white font-semibold text-xs transition shadow-sm flex items-center justify-center gap-2"
               >
                 {isAddingToCart ? (
                   <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
@@ -523,7 +512,7 @@ export default function ProductDetails() {
                   <CartIcon className="w-4 h-4" />
                 )}
                 <span>
-                  {isOutOfStock ? "Out of Stock" : isAddingToCart ? "Adding..." : "Add to Shopping Cart"}
+                  {isOutOfStock ? "Out of Stock" : isAddingToCart ? "Adding..." : "Add to Cart"}
                 </span>
               </button>
 
@@ -531,57 +520,61 @@ export default function ProductDetails() {
               <button
                 type="button"
                 onClick={handleWishlistToggle}
-                className={`p-3 rounded-2xl border transition ${
+                className={`w-11 h-11 rounded-full border flex items-center justify-center transition shadow-xs ${
                   isWishlisted
-                    ? "bg-rose-500/20 text-rose-400 border-rose-500/40"
-                    : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700"
+                    ? "bg-rose-50 text-rose-500 border-rose-200"
+                    : "bg-white border-neutral-200 text-neutral-500 hover:text-rose-500 hover:border-rose-200"
                 }`}
                 aria-label="Toggle wishlist"
               >
-                <HeartIcon className="w-5 h-5" filled={isWishlisted} />
+                <HeartIcon className={`w-4 h-4 ${isWishlisted ? "fill-rose-500" : ""}`} />
               </button>
+            </div>
+          </div>
+
+          {/* Guarantees Strip */}
+          <div className="pt-2 grid grid-cols-2 gap-3 text-xs text-neutral-600">
+            <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs">
+              <TruckIcon className="w-4 h-4 text-neutral-800" />
+              <span>Complimentary Shipping</span>
+            </div>
+            <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs">
+              <RotateCcwIcon className="w-4 h-4 text-neutral-800" />
+              <span>30-Day Easy Returns</span>
             </div>
           </div>
 
           {/* Specifications Table */}
           {product.specifications && Object.keys(product.specifications).length > 0 && (
-            <div className="pt-6 border-t border-slate-800">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">
+            <div className="pt-4 border-t border-neutral-100">
+              <h3 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-2.5">
                 Technical Specifications
               </h3>
-              <div className="rounded-2xl bg-slate-900/40 border border-slate-800/80 divide-y divide-slate-800/60 overflow-hidden text-xs">
+              <div className="rounded-2xl bg-white border border-neutral-200/80 divide-y divide-neutral-100 overflow-hidden text-xs shadow-xs">
                 {Object.entries(product.specifications).map(([key, val]) => (
                   <div key={key} className="flex py-2.5 px-4 justify-between">
-                    <span className="text-slate-400 capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-                    <span className="font-semibold text-slate-200">{String(val)}</span>
+                    <span className="text-neutral-500 capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+                    <span className="font-semibold text-neutral-900">{String(val)}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
-
-          {/* Guarantees Box */}
-          <div className="pt-4 grid grid-cols-2 gap-3 text-xs text-slate-400">
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-900/40 border border-slate-800/60">
-              <TruckIcon className="w-4 h-4 text-indigo-400" />
-              <span>Complimentary Express Shipping</span>
-            </div>
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-900/40 border border-slate-800/60">
-              <RotateCcwIcon className="w-4 h-4 text-cyan-400" />
-              <span>30-Day Hassle-Free Returns</span>
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Part 17: AI-Powered Review Intelligence Summary */}
-      <AIReviewSummary productId={product._id} />
+      <div className="mt-16">
+        <AIReviewSummary productId={product._id} />
+      </div>
 
       {/* Customer Review & Rating Section */}
-      <ReviewSection productId={product._id} />
+      <div id="reviews-section" className="mt-12">
+        <ReviewSection productId={product._id} />
+      </div>
 
       {/* Part 14: AI Semantic Similar Products */}
-      <div className="pt-10 border-t border-slate-800/80">
+      <div className="mt-16 pt-10 border-t border-neutral-200">
         <SimilarProducts
           productId={product._id}
           title="Similar Products You May Like"
@@ -591,7 +584,7 @@ export default function ProductDetails() {
       </div>
 
       {/* Contextual & Personalized Behavioral Recommendations (Part 13) */}
-      <div className="pt-6">
+      <div className="mt-12">
         <RecommendedProducts
           contextProductId={product._id}
           title="Recommended For You"

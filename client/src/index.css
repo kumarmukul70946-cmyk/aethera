@@ -35,3 +35,69 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #9CA3AF;
 }
+
+/* ================================================
+   10. BUTTONS & MICRO-INTERACTIONS
+   hover: translateY(-2px)
+   active: scale(0.97)
+   arrow moves 3-4px to the right
+   Transition: 200-300ms
+   ================================================ */
+button:not(:disabled):not(.no-lift),
+a.btn-interactive {
+  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 250ms ease, background-color 250ms ease, border-color 250ms ease, opacity 250ms ease;
+}
+
+button:not(:disabled):not(.no-lift):hover,
+a.btn-interactive:hover {
+  transform: translateY(-2px);
+}
+
+button:not(:disabled):not(.no-lift):active,
+a.btn-interactive:active {
+  transform: scale(0.97);
+}
+
+/* Arrow micro-movement */
+.btn-arrow,
+.arrow-slide {
+  display: inline-block;
+  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .btn-arrow,
+a:hover .btn-arrow,
+button:hover .btn-arrow,
+.group:hover .arrow-slide {
+  transform: translateX(4px);
+}
+
+/* ================================================
+   12. IMAGE INTERACTION
+   On hover: scale(1.03-1.05)
+   Transition: 500-700ms
+   ================================================ */
+.img-interactive {
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.group:hover .img-interactive,
+.img-interactive:hover {
+  transform: scale(1.04);
+}
+
+/* ================================================
+   14. ACCESSIBILITY & PREFERS-REDUCED-MOTION
+   ================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+    transform: none !important;
+  }
+}

@@ -48,6 +48,35 @@ export const login = async (req, res, next) => {
 };
 
 /**
+ * Google OAuth sign-in / sign-up.
+ * @route POST /api/auth/google
+ * @access Public
+ */
+export const googleLogin = async (req, res, next) => {
+  try {
+    const { credential, email, name, avatar, googleId } = req.body;
+    const { user, token } = await authService.googleLoginUser({
+      credential,
+      email,
+      name,
+      avatar,
+      googleId
+    });
+
+    // Set JWT in secure HTTP-only cookie
+    res.cookie("token", token, getAuthCookieOptions());
+
+    res.status(200).json({
+      success: true,
+      message: "Google sign-in successful",
+      data: { user }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Logout user and clear authentication cookie.
  * @route POST /api/auth/logout
  * @access Protected
@@ -140,6 +169,7 @@ export const adminCheck = (req, res) => {
 export default {
   register,
   login,
+  googleLogin,
   logout,
   getMe,
   updateProfile,
