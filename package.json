@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A production-quality AI-powered e-commerce platform with an immersive 3D shopping experience",
   "scripts": {
+    "build": "npm --prefix client run build",
     "dev:client": "npm --prefix client run dev",
     "dev:server": "npm --prefix server run dev",
     "build:client": "npm --prefix client run build",
