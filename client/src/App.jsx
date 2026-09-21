@@ -20,6 +20,7 @@ const Orders = lazy(() => import("./pages/Orders.jsx"));
 const OrderDetails = lazy(() => import("./pages/OrderDetails.jsx"));
 const Categories = lazy(() => import("./pages/Categories.jsx"));
 const Deals = lazy(() => import("./pages/Deals.jsx"));
+const CompareProducts = lazy(() => import("./pages/CompareProducts.jsx"));
 import ProtectedRoute from "./components/common/ProtectedRoute.jsx";
 
 // Minimal fallback loader during route transitions
@@ -57,6 +58,14 @@ export default function App() {
                 <Route path="/register" element={<Register />} />
 
                 {/* Protected Customer Routes */}
+                <Route
+                  path="/compare"
+                  element={
+                    <ProtectedRoute>
+                      <CompareProducts />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/cart"
                   element={

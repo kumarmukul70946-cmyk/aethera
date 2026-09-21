@@ -28,16 +28,23 @@ import RecommendedProducts from "../components/product/RecommendedProducts.jsx";
 import SimilarProducts from "../components/product/SimilarProducts.jsx";
 import ErrorState from "../components/common/ErrorState.jsx";
 import {
+  addToCompare,
+  removeFromCompare
+} from "../features/comparison/comparisonSlice.js";
+import { selectIsProductComparing } from "../features/comparison/comparisonSelectors.js";
+import {
   StarIcon,
   HeartIcon,
   CartIcon,
   TruckIcon,
   RotateCcwIcon,
   CheckIcon,
-  CubeIcon
+  CubeIcon,
+  CompareIcon
 } from "../components/common/Icons.jsx";
 import { formatCurrency, calculateSavings } from "../utils/formatters.js";
 import CustomizationPanel from "../components/customization/CustomizationPanel.jsx";
+import AI3DCustomizer from "../components/customization/AI3DCustomizer.jsx";
 import { createDefaultCustomizationState } from "../three/customization/customizationTypes.js";
 
 // Lazy load 3D viewer
@@ -54,6 +61,7 @@ export default function ProductDetails() {
   const loading = useSelector(selectProductDetailLoading);
   const error = useSelector(selectProductDetailError);
   const wishlistItems = useSelector(selectWishlistItems);
+  const isComparing = useSelector(selectIsProductComparing(product?._id));
 
   // Local state for user interactive choices
   const [selectedColor, setSelectedColor] = useState(null);
@@ -64,6 +72,7 @@ export default function ProductDetails() {
   const [errorToast, setErrorToast] = useState(null);
   const [activeMediaTab, setActiveMediaTab] = useState("images");
   const [customizationState, setCustomizationState] = useState({});
+  const [customizationHistory, setCustomizationHistory] = useState([]);
   const lastTrackedProductId = useRef(null);
 
   const isWishlisted = Boolean(
@@ -78,7 +87,11 @@ export default function ProductDetails() {
     if (slug) {
       dispatch(fetchProductBySlug(slug));
     } else if (id) {
-      dispatch(fetchProductById(id));
+      if (/^[0-9a-fA-F]{24}$/.test(id)) {
+        dispatch(fetchProductById(id));
+      } else {
+        dispatch(fetchProductBySlug(id));
+      }
     }
 
     return () => {
@@ -106,6 +119,7 @@ export default function ProductDetails() {
       }
       setQuantity(1);
       setActiveMediaTab("images");
+      setCustomizationHistory([]);
 
       if (product.customization?.enabled) {
         setCustomizationState(createDefaultCustomizationState(product.customization));
@@ -115,17 +129,77 @@ export default function ProductDetails() {
     }
   }, [product]);
 
+  // Helper to push pure serializable state onto undo history stack
+  const pushToHistory = (prevState) => {
+    setCustomizationHistory((history) => [...history.slice(-9), prevState]);
+  };
+
   const handleCustomizationChange = (areaId, option) => {
-    setCustomizationState((prev) => ({
-      ...prev,
-      [areaId]: option
-    }));
+    setCustomizationState((prev) => {
+      pushToHistory(prev);
+      return {
+        ...prev,
+        [areaId]: option
+      };
+    });
   };
 
   const handleResetCustomization = () => {
     if (product?.customization?.enabled) {
-      setCustomizationState(createDefaultCustomizationState(product.customization));
+      setCustomizationState((prev) => {
+        pushToHistory(prev);
+        return createDefaultCustomizationState(product.customization);
+      });
     }
+  };
+
+  // Handler for validated changes returned from AI Natural Language Customizer
+  const handleAIApplyChanges = (changes) => {
+    if (!product?.customization?.areas || !Array.isArray(changes) || changes.length === 0) return;
+
+    setCustomizationState((prev) => {
+      pushToHistory(prev);
+      const nextState = { ...prev };
+
+      changes.forEach((change) => {
+        const areaDef = product.customization.areas.find((a) => a.id === change.area);
+        if (!areaDef) return;
+
+        const option = (areaDef.options || []).find(
+          (opt) =>
+            opt.id === change.optionId ||
+            opt.value?.toLowerCase() === change.value?.toLowerCase() ||
+            opt.color?.toLowerCase() === change.value?.toLowerCase() ||
+            opt.name?.toLowerCase() === change.optionName?.toLowerCase()
+        );
+
+        if (option) {
+          nextState[change.area] = {
+            id: option.id,
+            name: option.name || option.label || option.id,
+            color: option.color || option.value,
+            roughness: typeof option.roughness === "number" ? option.roughness : 0.4,
+            metalness: typeof option.metalness === "number" ? option.metalness : 0.2
+          };
+        }
+      });
+
+      return nextState;
+    });
+  };
+
+  // Restores the previous customization state from the history stack
+  const handleUndoCustomization = () => {
+    if (customizationHistory.length === 0) return;
+
+    setCustomizationHistory((prevHistory) => {
+      const copy = [...prevHistory];
+      const previousState = copy.pop();
+      if (previousState) {
+        setCustomizationState(previousState);
+      }
+      return copy;
+    });
   };
 
   if (loading) {
@@ -211,6 +285,15 @@ export default function ProductDetails() {
       dispatch(removeFromWishlist(product._id));
     } else {
       dispatch(addToWishlist(product._id));
+    }
+  };
+
+  const handleCompareToggle = () => {
+    if (!product) return;
+    if (isComparing) {
+      dispatch(removeFromCompare(product._id));
+    } else {
+      dispatch(addToCompare(product));
     }
   };
 
@@ -315,14 +398,28 @@ export default function ProductDetails() {
                 </div>
               </Suspense>
 
-              {/* Live 3D Customizer Panel */}
+              {/* Live 3D Customizer Controls (AI + Manual Swatches) */}
               {product.customization?.enabled && (
-                <CustomizationPanel
-                  configuration={product.customization}
-                  customizationState={customizationState}
-                  onChange={handleCustomizationChange}
-                  onReset={handleResetCustomization}
-                />
+                <div className="space-y-4">
+                  {/* Natural-Language AI Customizer */}
+                  <AI3DCustomizer
+                    productId={product._id}
+                    configuration={product.customization}
+                    currentCustomization={customizationState}
+                    onApplyChanges={handleAIApplyChanges}
+                    onReset={handleResetCustomization}
+                    onUndo={handleUndoCustomization}
+                    canUndo={customizationHistory.length > 0}
+                  />
+
+                  {/* Manual Deterministic Controls */}
+                  <CustomizationPanel
+                    configuration={product.customization}
+                    customizationState={customizationState}
+                    onChange={handleCustomizationChange}
+                    onReset={handleResetCustomization}
+                  />
+                </div>
               )}
             </div>
           ) : (
@@ -520,7 +617,7 @@ export default function ProductDetails() {
               <button
                 type="button"
                 onClick={handleWishlistToggle}
-                className={`w-11 h-11 rounded-full border flex items-center justify-center transition shadow-xs ${
+                className={`w-11 h-11 rounded-full border flex items-center justify-center transition shadow-xs cursor-pointer ${
                   isWishlisted
                     ? "bg-rose-50 text-rose-500 border-rose-200"
                     : "bg-white border-neutral-200 text-neutral-500 hover:text-rose-500 hover:border-rose-200"
@@ -528,6 +625,21 @@ export default function ProductDetails() {
                 aria-label="Toggle wishlist"
               >
                 <HeartIcon className={`w-4 h-4 ${isWishlisted ? "fill-rose-500" : ""}`} />
+              </button>
+
+              {/* Compare Button */}
+              <button
+                type="button"
+                onClick={handleCompareToggle}
+                className={`w-11 h-11 rounded-full border flex items-center justify-center transition shadow-xs cursor-pointer ${
+                  isComparing
+                    ? "bg-neutral-900 text-white border-neutral-900"
+                    : "bg-white border-neutral-200 text-neutral-500 hover:text-neutral-900 hover:border-neutral-300"
+                }`}
+                title={isComparing ? "In comparison (click to remove)" : "Compare this product"}
+                aria-label="Compare product"
+              >
+                <CompareIcon className="w-4 h-4" />
               </button>
             </div>
           </div>

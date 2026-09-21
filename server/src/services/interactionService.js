@@ -56,7 +56,7 @@ export const interactionService = {
       throw new Error("Interaction type is required");
     }
 
-    const validTypes = ["VIEW", "SEARCH", "WISHLIST", "CART", "PURCHASE", "RATING"];
+    const validTypes = ["VIEW", "SEARCH", "WISHLIST", "CART", "PURCHASE", "RATING", "CUSTOMIZATION"];
     if (!validTypes.includes(type)) {
       throw new Error(`Invalid interaction type: ${type}`);
     }

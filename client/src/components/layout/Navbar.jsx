@@ -11,8 +11,10 @@ import {
   UserIcon,
   MenuIcon,
   CloseIcon,
-  CubeIcon
+  CubeIcon,
+  CompareIcon
 } from "../common/Icons.jsx";
+import { selectComparisonCount } from "../../features/comparison/comparisonSelectors.js";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -25,6 +27,7 @@ export default function Navbar() {
 
   const cartCount = useSelector(selectCartItemCount);
   const wishlistCount = useSelector(selectWishlistItemCount);
+  const compareCount = useSelector(selectComparisonCount);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -99,6 +102,9 @@ export default function Navbar() {
             <NavLink to="/deals" className={navLinkClass}>
               Deals
             </NavLink>
+            <NavLink to="/compare" className={navLinkClass}>
+              Compare
+            </NavLink>
           </nav>
 
           {/* Search Bar (Center Pill) */}
@@ -118,6 +124,21 @@ export default function Navbar() {
 
           {/* Right Action Items */}
           <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+
+            {/* Compare Link */}
+            <Link
+              to="/compare"
+              className="relative flex items-center gap-1.5 py-1.5 px-2 text-neutral-600 hover:text-neutral-900 rounded-lg transition text-xs font-medium"
+              title="Compare Products"
+            >
+              <CompareIcon className="w-4 h-4" />
+              <span className="hidden md:inline">Compare</span>
+              {compareCount > 0 && (
+                <span className="w-4 h-4 rounded-full bg-neutral-900 text-[10px] font-bold text-white flex items-center justify-center">
+                  {compareCount}
+                </span>
+              )}
+            </Link>
 
             {/* Wishlist Link */}
             <Link
@@ -269,6 +290,18 @@ export default function Navbar() {
                 className="px-3 py-2 rounded-xl text-sm font-medium text-neutral-800 hover:bg-neutral-100"
               >
                 Deals
+              </Link>
+              <Link
+                to="/compare"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-3 py-2 rounded-xl text-sm font-medium text-neutral-800 hover:bg-neutral-100 flex items-center justify-between"
+              >
+                <span>Compare</span>
+                {compareCount > 0 && (
+                  <span className="w-5 h-5 rounded-full bg-neutral-900 text-[10px] font-bold text-white flex items-center justify-center">
+                    {compareCount}
+                  </span>
+                )}
               </Link>
             </div>
           </div>

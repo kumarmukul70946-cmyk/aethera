@@ -304,6 +304,201 @@ class AiService {
   }
 
   /**
+   * Generates a structured multi-product comparison (summary narrative, balanced trade-offs,
+   * review themes, and question answer) grounded in MongoDB products and approved reviews.
+   *
+   * @param {Object} params
+   * @param {string} params.systemPrompt
+   * @param {string} params.userPrompt
+   * @param {Array<Object>} params.products
+   * @param {Object} params.reviewData
+   * @param {string} [params.question]
+   * @returns {Promise<Object>}
+   */
+  async generateStructuredComparison({
+    systemPrompt,
+    userPrompt,
+    products = [],
+    reviewData = {},
+    question = ""
+  }) {
+    const activeProvider = (process.env.LLM_PROVIDER || this.provider).toLowerCase();
+    const hasKey = Boolean(process.env.LLM_API_KEY || this.apiKey);
+
+    let rawJson = "";
+
+    if (activeProvider === "mock" || !hasKey || process.env.NODE_ENV === "test") {
+      const mockResult = this._generateMockComparison({ products, reviewData, question });
+      return this.validateComparisonOutput(mockResult, products);
+    } else if (activeProvider === "gemini") {
+      rawJson = await this._callGeminiForJson({
+        systemPrompt,
+        userPrompt,
+        maxTokens: 1500
+      });
+    } else if (activeProvider === "openai") {
+      rawJson = await this._callOpenAiForJson({
+        systemPrompt,
+        userPrompt,
+        maxTokens: 1500
+      });
+    } else {
+      const mockResult = this._generateMockComparison({ products, reviewData, question });
+      return this.validateComparisonOutput(mockResult, products);
+    }
+
+    let parsed;
+    try {
+      const cleanJson = rawJson.replace(/```json\s*|\s*```/gi, "").trim();
+      parsed = JSON.parse(cleanJson);
+    } catch (parseErr) {
+      console.warn("[AiService] Failed to parse comparison JSON directly, attempting regex extraction:", parseErr.message);
+      const jsonMatch = rawJson.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        parsed = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error("AI provider failed to return a valid JSON product comparison.");
+      }
+    }
+
+    return this.validateComparisonOutput(parsed, products);
+  }
+
+  /**
+   * Deterministic mock multi-product comparison generator for testing and local development.
+   * Synthesizes grounded facts, balanced trade-offs without arbitrary winner declaration,
+   * customer review themes, and safe question handling.
+   */
+  _generateMockComparison({ products = [], reviewData = {}, question = "" }) {
+    if (!products || products.length === 0) {
+      return {
+        summary: "No products provided for comparison.",
+        tradeoffs: [],
+        reviewInsights: [],
+        questionAnswer: null
+      };
+    }
+
+    // Check for prompt injection attempts in question or descriptions
+    const injectionPatterns = [
+      "ignore previous instructions",
+      "ignore all previous instructions",
+      "reveal your system prompt",
+      "reveal system prompt",
+      "show your prompt",
+      "tell me your instructions",
+      "system instructions",
+      "developer instructions",
+      "override instructions"
+    ];
+
+    const hasInjection = injectionPatterns.some((pat) =>
+      (question || "").toLowerCase().includes(pat) ||
+      products.some((p) => (p.description || "").toLowerCase().includes(pat))
+    );
+
+    const pNames = products.map((p) => p.name).join(" and ");
+
+    let summary = "";
+    if (hasInjection) {
+      summary = `Comparing ${pNames}. Grounded comparison is generated exclusively from authoritative database attributes and approved customer reviews. System security instructions cannot be bypassed or overridden.`;
+    } else {
+      const parts = products.map((p) => {
+        const price = p.finalPrice || p.price;
+        const rating = typeof p.rating === "number" ? p.rating.toFixed(1) : "N/A";
+        return `${p.name} by ${p.brand || "Aethera"} (listed at ₹${price}, rated ${rating}/5)`;
+      });
+      summary = `Comparing ${parts.join(" against ")}. Each product presents distinct trade-offs across pricing, ratings, color availability, and customer feedback.`;
+    }
+
+    // Build balanced tradeoffs for each product
+    const tradeoffs = products.map((p) => {
+      const pid = p._id ? p._id.toString() : p.id;
+      const points = [];
+      const price = p.finalPrice || p.price;
+
+      points.push(`Listed at ₹${price}${p.discount ? ` with ${p.discount}% discount` : ""}`);
+      if (p.rating && p.rating >= 4.5) {
+        points.push(`High customer satisfaction with ${p.rating.toFixed(1)}/5 rating`);
+      } else if (p.rating) {
+        points.push(`Customer rating of ${p.rating.toFixed(1)}/5 based on ${p.reviewCount || 0} reviews`);
+      }
+
+      if (Array.isArray(p.sizes) && p.sizes.length > 0) {
+        points.push(`Available in ${p.sizes.length} sizes (${p.sizes.slice(0, 4).join(", ")})`);
+      }
+      if (Array.isArray(p.colors) && p.colors.length > 0) {
+        points.push(`Offered in ${p.colors.length} color variants`);
+      }
+      if (p.stock !== undefined) {
+        points.push(p.stock > 0 ? `In stock (${p.stock} units)` : "Currently out of stock");
+      }
+
+      return {
+        productId: pid,
+        points: points.slice(0, 4)
+      };
+    });
+
+    // Build review insights from reviewData
+    const reviewInsights = products.map((p) => {
+      const pid = p._id ? p._id.toString() : p.id;
+      const rData = reviewData[pid] || {};
+
+      let posThemes = [];
+      let conThemes = [];
+      let reviewNarrative = "";
+
+      if (Array.isArray(rData.themes) && rData.themes.length > 0) {
+        posThemes = rData.themes
+          .filter((t) => t.sentiment === "positive")
+          .map((t) => t.name)
+          .slice(0, 3);
+        conThemes = rData.themes
+          .filter((t) => t.sentiment === "negative" || t.sentiment === "mixed")
+          .map((t) => t.name)
+          .slice(0, 2);
+      }
+
+      if (posThemes.length === 0) posThemes = ["Quality", "Value"];
+      if (conThemes.length === 0) conThemes = ["Fit considerations"];
+
+      if (rData.summary) {
+        reviewNarrative = rData.summary;
+      } else if (p.reviewCount > 0) {
+        reviewNarrative = `Customers report an overall rating of ${p.rating ? p.rating.toFixed(1) : "N/A"}/5 based on ${p.reviewCount} reviews.`;
+      } else {
+        reviewNarrative = "No approved customer reviews are currently available for this product.";
+      }
+
+      return {
+        productId: pid,
+        positiveThemes: posThemes,
+        concernThemes: conThemes,
+        summary: reviewNarrative
+      };
+    });
+
+    let questionAnswer = null;
+    if (question && question.trim()) {
+      if (hasInjection) {
+        questionAnswer = "I cannot fulfill requests to ignore system guidelines, rank products arbitrarily, or alter catalog facts.";
+      } else {
+        const p1 = products[0];
+        const p2 = products[1] || products[0];
+        questionAnswer = `Regarding "${question.trim()}": When evaluating suitability, ${p1.name} (₹${p1.finalPrice || p1.price}) and ${p2.name} (₹${p2.finalPrice || p2.price}) offer distinct characteristics. Choose based on whether your priority is pricing, specific sizing availability, or verified customer rating.`;
+      }
+    }
+
+    return {
+      summary,
+      tradeoffs,
+      reviewInsights,
+      questionAnswer
+    };
+  }
+
+  /**
    * Deterministic mock review summarizer for testing and local development.
    * Analyzes actual customer reviews, detects sentiments and common themes,
    * handles prompt injection safely as data, and formats a grounded response.
@@ -487,7 +682,7 @@ class AiService {
   /**
    * Calls Google Gemini with JSON enforcement.
    */
-  async _callGeminiForJson({ systemPrompt, userPrompt }) {
+  async _callGeminiForJson({ systemPrompt, userPrompt, maxTokens = 800 }) {
     const apiKey = process.env.LLM_API_KEY || this.apiKey;
     const model = process.env.LLM_MODEL || "gemini-1.5-flash";
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -507,7 +702,7 @@ class AiService {
         ],
         generationConfig: {
           temperature: 0.2,
-          maxOutputTokens: 800,
+          maxOutputTokens: maxTokens,
           responseMimeType: "application/json"
         }
       })
@@ -516,13 +711,13 @@ class AiService {
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`[AiService] Gemini JSON error (${response.status}):`, errorText.slice(0, 200));
-      throw new Error("AI provider returned an error while summarizing reviews.");
+      throw new Error("AI provider returned an error while processing JSON request.");
     }
 
     const data = await response.json();
     const candidate = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!candidate) {
-      throw new Error("No review summary generated by AI model.");
+      throw new Error("No structured output generated by AI model.");
     }
 
     return candidate.trim();
@@ -531,7 +726,7 @@ class AiService {
   /**
    * Calls OpenAI-compatible API with JSON mode.
    */
-  async _callOpenAiForJson({ systemPrompt, userPrompt }) {
+  async _callOpenAiForJson({ systemPrompt, userPrompt, maxTokens = 800 }) {
     const apiKey = process.env.LLM_API_KEY || this.apiKey;
     const model = process.env.LLM_MODEL || "gpt-4o-mini";
     const url = process.env.OPENAI_BASE_URL || "https://api.openai.com/v1/chat/completions";
@@ -549,7 +744,7 @@ class AiService {
           { role: "user", content: userPrompt }
         ],
         temperature: 0.2,
-        max_tokens: 800,
+        max_tokens: maxTokens,
         response_format: { type: "json_object" }
       })
     });
@@ -557,13 +752,13 @@ class AiService {
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`[AiService] OpenAI JSON error (${response.status}):`, errorText.slice(0, 200));
-      throw new Error("AI provider returned an error while summarizing reviews.");
+      throw new Error("AI provider returned an error while processing JSON request.");
     }
 
     const data = await response.json();
     const answer = data.choices?.[0]?.message?.content;
     if (!answer) {
-      throw new Error("No review summary generated by OpenAI model.");
+      throw new Error("No structured output generated by OpenAI model.");
     }
 
     return answer.trim();
@@ -635,6 +830,385 @@ class AiService {
       summary,
       sentiment,
       themes: validatedThemes
+    };
+  }
+
+  /**
+   * Validates, sanitizes, and cross-verifies structured multi-product comparison output.
+   * Ensures:
+   * 1. No arbitrary HTML tags or scripts.
+   * 2. All product IDs in tradeoffs and reviewInsights exist in the retrieved product set.
+   * 3. Hallucinated product IDs are discarded.
+   * 4. Missing products have clean fallback trade-offs populated.
+   * 5. String length limits are strictly enforced.
+   *
+   * @param {Object} raw
+   * @param {Array<Object>} products - Retrieved authoritative products from MongoDB
+   * @returns {Object} Validated structured comparison
+   */
+  validateComparisonOutput(raw = {}, products = []) {
+    if (!raw || typeof raw !== "object") {
+      throw new Error("Invalid comparison payload: must be an object.");
+    }
+
+    const stripHtml = (str) =>
+      typeof str === "string" ? str.replace(/<[^>]*>?/gm, "").trim() : "";
+
+    const allowedIds = new Set(
+      products.map((p) => (p._id ? p._id.toString() : p.id?.toString()))
+    );
+
+    // 1. Validate summary narrative
+    let summary = stripHtml(raw.summary);
+    if (!summary) {
+      summary = "Comparison based on current catalog data and customer reviews.";
+    }
+    if (summary.length > 2000) {
+      summary = summary.slice(0, 1997) + "...";
+    }
+
+    // 2. Validate tradeoffs
+    const rawTradeoffs = Array.isArray(raw.tradeoffs) ? raw.tradeoffs : [];
+    const validTradeoffs = [];
+    const seenTradeoffIds = new Set();
+
+    for (const t of rawTradeoffs) {
+      if (!t || typeof t !== "object") continue;
+      const pid = String(t.productId || "").trim();
+      // Enforce product ID must exist in authoritative products (reject hallucinated IDs)
+      if (!allowedIds.has(pid) || seenTradeoffIds.has(pid)) continue;
+
+      seenTradeoffIds.add(pid);
+      const points = Array.isArray(t.points)
+        ? t.points
+            .map((pt) => stripHtml(pt))
+            .filter(Boolean)
+            .map((pt) => (pt.length > 250 ? pt.slice(0, 247) + "..." : pt))
+            .slice(0, 6)
+        : [];
+
+      validTradeoffs.push({
+        productId: pid,
+        points: points.length > 0 ? points : ["Standard catalog specifications apply."]
+      });
+    }
+
+    // Ensure all requested products have a trade-off entry
+    for (const p of products) {
+      const pid = p._id ? p._id.toString() : p.id?.toString();
+      if (!seenTradeoffIds.has(pid)) {
+        validTradeoffs.push({
+          productId: pid,
+          points: [
+            `Listed at ₹${p.finalPrice || p.price}`,
+            `Rating: ${p.rating ? p.rating.toFixed(1) : "0.0"}/5 (${p.reviewCount || 0} reviews)`
+          ]
+        });
+      }
+    }
+
+    // 3. Validate reviewInsights
+    const rawInsights = Array.isArray(raw.reviewInsights) ? raw.reviewInsights : [];
+    const validInsights = [];
+    const seenInsightIds = new Set();
+
+    for (const ins of rawInsights) {
+      if (!ins || typeof ins !== "object") continue;
+      const pid = String(ins.productId || "").trim();
+      if (!allowedIds.has(pid) || seenInsightIds.has(pid)) continue;
+
+      seenInsightIds.add(pid);
+      const pos = Array.isArray(ins.positiveThemes)
+        ? ins.positiveThemes.map((x) => stripHtml(x).slice(0, 50)).filter(Boolean).slice(0, 5)
+        : [];
+      const con = Array.isArray(ins.concernThemes)
+        ? ins.concernThemes.map((x) => stripHtml(x).slice(0, 50)).filter(Boolean).slice(0, 5)
+        : [];
+      let insSummary = stripHtml(ins.summary);
+      if (insSummary.length > 500) {
+        insSummary = insSummary.slice(0, 497) + "...";
+      }
+
+      validInsights.push({
+        productId: pid,
+        positiveThemes: pos,
+        concernThemes: con,
+        summary: insSummary || "Customer feedback reflects catalog rating."
+      });
+    }
+
+    // Ensure all requested products have review insight entry
+    for (const p of products) {
+      const pid = p._id ? p._id.toString() : p.id?.toString();
+      if (!seenInsightIds.has(pid)) {
+        validInsights.push({
+          productId: pid,
+          positiveThemes: ["Quality", "Design"],
+          concernThemes: [],
+          summary: `Rating of ${p.rating ? p.rating.toFixed(1) : "N/A"}/5 based on ${p.reviewCount || 0} reviews.`
+        });
+      }
+    }
+
+    // 4. Validate optional questionAnswer
+    let questionAnswer = null;
+    if (raw.questionAnswer && typeof raw.questionAnswer === "string") {
+      questionAnswer = stripHtml(raw.questionAnswer);
+      if (questionAnswer.length > 1500) {
+        questionAnswer = questionAnswer.slice(0, 1497) + "...";
+      }
+      if (!questionAnswer) questionAnswer = null;
+    }
+
+    return {
+      summary,
+      tradeoffs: validTradeoffs,
+      reviewInsights: validInsights,
+      questionAnswer
+    };
+  }
+
+  /**
+   * Interprets a user's natural language customization request into structured JSON intent.
+   * Leverages JSON mode for Gemini/OpenAI, and deterministic mock engine for local testing.
+   *
+   * @param {Object} params
+   * @param {string} params.systemPrompt
+   * @param {string} params.userPrompt
+   * @param {string} params.userMessage
+   * @param {Object} params.product
+   * @param {Object} params.currentCustomization
+   * @returns {Promise<Object>} Raw intent object
+   */
+  async interpretCustomizationIntent({
+    systemPrompt,
+    userPrompt,
+    userMessage = "",
+    product,
+    currentCustomization = {}
+  }) {
+    const activeProvider = (process.env.LLM_PROVIDER || this.provider).toLowerCase();
+    const hasKey = Boolean(process.env.LLM_API_KEY || this.apiKey);
+
+    let rawJsonString = "";
+
+    if (activeProvider === "mock" || !hasKey || process.env.NODE_ENV === "test") {
+      return this._generateMockCustomizationIntent({
+        userMessage,
+        product,
+        currentCustomization
+      });
+    } else if (activeProvider === "gemini") {
+      rawJsonString = await this._callGeminiForJson({
+        systemPrompt,
+        userPrompt,
+        maxTokens: 600
+      });
+    } else if (activeProvider === "openai") {
+      rawJsonString = await this._callOpenAiForJson({
+        systemPrompt,
+        userPrompt,
+        maxTokens: 600
+      });
+    } else {
+      return this._generateMockCustomizationIntent({
+        userMessage,
+        product,
+        currentCustomization
+      });
+    }
+
+    try {
+      return JSON.parse(rawJsonString);
+    } catch (e) {
+      console.error("[AiService] Failed to parse LLM JSON for customization intent:", rawJsonString);
+      return {
+        intent: "clarification_needed",
+        message: "Failed to parse structured response from AI model.",
+        question: "Please specify which part and color you wish to adjust.",
+        changes: []
+      };
+    }
+  }
+
+  /**
+   * Deterministic mock engine for AI 3D customization intent parsing.
+   * Accurately parses user requests, rejects prompt injection, detects ambiguity, and recognizes resets.
+   */
+  _generateMockCustomizationIntent({ userMessage = "", product, currentCustomization = {} }) {
+    const lower = userMessage.toLowerCase().trim();
+
+    // 1. Prompt injection / code execution attempt check
+    const injectionPatterns = [
+      "ignore previous instructions",
+      "ignore all instructions",
+      "reveal your system prompt",
+      "system prompt",
+      "eval(",
+      "javascript:",
+      "<script",
+      "exec(",
+      "function(",
+      "adminsecret"
+    ];
+
+    if (injectionPatterns.some((pattern) => lower.includes(pattern))) {
+      return {
+        intent: "clarification_needed",
+        message: "Customization requests cannot override safety instructions or execute arbitrary code.",
+        question: "Would you like to customize one of the available areas on this product?",
+        changes: []
+      };
+    }
+
+    // 2. Reset intent check
+    const resetKeywords = [
+      "reset",
+      "reset the design",
+      "reset customization",
+      "restore default",
+      "restore defaults",
+      "restore original",
+      "revert to default",
+      "revert to original",
+      "clear customization",
+      "start over"
+    ];
+
+    if (resetKeywords.some((kw) => lower === kw || lower.startsWith(kw) || lower.includes("reset"))) {
+      return {
+        intent: "reset_customization",
+        message: "Resetting 3D customization to original default specifications.",
+        changes: [],
+        question: null
+      };
+    }
+
+    // 3. Ambiguity check: user says something vague without specifying area or with contradictory options
+    const ambiguousPhrases = [
+      "make it dark",
+      "make it darker",
+      "make it light",
+      "make it lighter",
+      "change color",
+      "change the color",
+      "customize this",
+      "style it",
+      "make it cool",
+      "make it look nice",
+      "make it bright"
+    ];
+
+    if (ambiguousPhrases.some((phrase) => lower === phrase || lower === phrase + ".")) {
+      const areaNames = (product?.customization?.areas || []).map((a) => a.name || a.id).join(", ");
+      return {
+        intent: "clarification_needed",
+        message: "Your request is too broad to determine which section to style.",
+        question: `Which area would you like to update: ${areaNames || "the product"}?`,
+        changes: []
+      };
+    }
+
+    // 4. Unsupported geometry / feature request check
+    const unsupportedKeywords = [
+      "wing",
+      "wings",
+      "engine",
+      "jet",
+      "wheel",
+      "wheels",
+      "nuclear",
+      "weapon",
+      "blade",
+      "propeller",
+      "tail",
+      "fly"
+    ];
+
+    if (unsupportedKeywords.some((kw) => lower.includes(kw))) {
+      const areaNames = (product?.customization?.areas || []).map((a) => a.name || a.id).join(", ");
+      return {
+        intent: "clarification_needed",
+        message: "This product does not support adding new geometry or non-configurable components.",
+        question: `You can customize the following areas: ${areaNames}. Which would you like to style?`,
+        changes: []
+      };
+    }
+
+    // 5. Detect configurable areas and extract targeted changes
+    const areas = product?.customization?.areas || [];
+    const changes = [];
+
+    // Helper map of common color/option names to search in query
+    for (const area of areas) {
+      const areaId = area.id.toLowerCase();
+      const areaName = (area.name || area.id).toLowerCase();
+      const areaAliases = [areaId, areaName];
+
+      if (areaId === "body") areaAliases.push("headband", "shell", "cups", "shoe body", "main");
+      if (areaId === "cushions") areaAliases.push("cushion", "pads", "earpads", "ear cushions");
+      if (areaId === "trim") areaAliases.push("accent", "rings", "trim ring", "trim rings");
+      if (areaId === "laces") areaAliases.push("shoelace", "shoelaces", "strings");
+      if (areaId === "sole") areaAliases.push("bottom", "midsole", "outsole");
+
+      // Check if this area is mentioned or if it's the only area in the product
+      const isAreaMentioned = areaAliases.some((alias) => lower.includes(alias));
+
+      if (isAreaMentioned || (areas.length === 1 && !lower.includes("all"))) {
+        // Find which option for this area is referenced in the user's message
+        for (const opt of area.options || []) {
+          const optId = opt.id.toLowerCase();
+          const optName = (opt.name || opt.label || "").toLowerCase();
+          const optVal = (opt.value || opt.color || "").toLowerCase();
+
+          // Build keyword list for this option
+          const optKeywords = [optId, optName, optVal];
+          if (optName.includes("black")) optKeywords.push("black", "dark");
+          if (optName.includes("white")) optKeywords.push("white");
+          if (optName.includes("cyan")) optKeywords.push("cyan", "blue", "light blue");
+          if (optName.includes("gold")) optKeywords.push("gold", "yellow");
+          if (optName.includes("charcoal") || optName.includes("slate")) optKeywords.push("charcoal", "slate", "grey", "gray");
+          if (optName.includes("red") || optName.includes("crimson")) optKeywords.push("red", "crimson");
+          if (optName.includes("leather")) optKeywords.push("leather");
+          if (optName.includes("indigo")) optKeywords.push("indigo", "purple");
+          if (optName.includes("pink")) optKeywords.push("pink");
+
+          const matched = optKeywords.some((kw) => {
+            if (kw.length <= 2) return false;
+            // Check for whole word or snippet match
+            const regex = new RegExp(`\\b${kw}\\b`, "i");
+            return regex.test(lower);
+          });
+
+          if (matched) {
+            changes.push({
+              area: area.id,
+              property: area.type || "color",
+              value: opt.value || opt.color
+            });
+            break; // found option for this area
+          }
+        }
+      }
+    }
+
+    if (changes.length > 0) {
+      const summaryParts = changes.map((c) => `${c.area} to ${c.value}`);
+      return {
+        intent: "customize_product",
+        message: `Setting ${summaryParts.join(" and ")}.`,
+        changes,
+        question: null
+      };
+    }
+
+    // If nothing matched, ask for clarification
+    const areaNames = areas.map((a) => a.name || a.id).join(", ");
+    return {
+      intent: "clarification_needed",
+      message: "Could not determine exact styling options from your message.",
+      question: `Available customizable areas are: ${areaNames}. What colors or options would you prefer?`,
+      changes: []
     };
   }
 

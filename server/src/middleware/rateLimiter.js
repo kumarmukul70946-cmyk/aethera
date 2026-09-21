@@ -82,12 +82,48 @@ export const aiReviewSummaryRateLimiter = rateLimit({
   }
 });
 
+/**
+ * Strict rate limiter for AI product comparison.
+ * Prevents denial of service and controls multi-product LLM comparison costs.
+ * 30 requests per 15 minutes per IP in production.
+ */
+export const aiComparisonRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === "production" ? 30 : 1000,
+  skip: () => process.env.NODE_ENV === "test",
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many AI product comparison requests from this IP, please try again in a few minutes."
+  }
+});
+
+/**
+ * Strict rate limiter for AI 3D product customization.
+ * Prevents denial of service and controls LLM customization interpretation costs.
+ * 30 requests per 15 minutes per IP in production.
+ */
+export const aiCustomizationRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === "production" ? 30 : 1000,
+  skip: () => process.env.NODE_ENV === "test",
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many AI 3D customization requests from this IP, please try again in a few minutes."
+  }
+});
+
 export default {
   apiRateLimiter,
   authRateLimiter,
   interactionRateLimiter,
   aiRateLimiter,
-  aiReviewSummaryRateLimiter
+  aiReviewSummaryRateLimiter,
+  aiComparisonRateLimiter,
+  aiCustomizationRateLimiter
 };
 
 

@@ -8,6 +8,7 @@ import orderReducer from "../features/orders/orderSlice.js";
 import reviewReducer from "../features/reviews/reviewSlice.js";
 import recommendationReducer from "../features/recommendations/recommendationSlice.js";
 import aiReducer from "../features/ai/aiSlice.js";
+import comparisonReducer from "../features/comparison/comparisonSlice.js";
 
 /**
  * Aethera Commerce Central Redux Store
@@ -22,7 +23,8 @@ export const store = configureStore({
     orders: orderReducer,
     reviews: reviewReducer,
     recommendations: recommendationReducer,
-    ai: aiReducer
+    ai: aiReducer,
+    comparison: comparisonReducer
   },
   devTools: process.env.NODE_ENV !== "production"
 });

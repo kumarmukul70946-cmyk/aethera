@@ -21,6 +21,8 @@
     "test:semantic-search": "node test/semanticSearchTest.js",
     "test:ai": "node test/aiAssistantTest.js",
     "test:review-summary": "node test/reviewSummaryTest.js",
+    "test:comparison": "node test/productComparisonTest.js",
+    "test:ai-customization": "node test/aiCustomizationTest.js",
     "embeddings:generate": "node src/scripts/generateEmbeddings.js"
   },
   "dependencies": {

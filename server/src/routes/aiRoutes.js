@@ -7,6 +7,8 @@ import {
   sessionIdParamValidator,
   validateRequest
 } from "../validators/aiValidators.js";
+import productComparisonRoutes from "./productComparisonRoutes.js";
+import aiCustomizationRoutes from "./aiCustomizationRoutes.js";
 
 const router = Router();
 
@@ -25,6 +27,20 @@ router.post(
   validateRequest,
   aiController.chat
 );
+
+/**
+ * @route   POST /api/ai/compare
+ * @desc    Compare 2-4 products grounded in catalog data and approved reviews
+ * @access  Private
+ */
+router.use("/compare", productComparisonRoutes);
+
+/**
+ * @route   POST /api/ai/customize
+ * @desc    Interpret natural-language styling prompt into validated 3D customization commands
+ * @access  Private
+ */
+router.use("/customize", aiCustomizationRoutes);
 
 /**
  * @route   GET /api/ai/sessions

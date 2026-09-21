@@ -595,6 +595,58 @@ export const productsData = [
     description: "Ultra-responsive marathon road shoes featuring nitrogen-infused supercritical foam and carbon propulsion plate.",
     images: ["/images/products/running-shoes-1.jpg"],
     model3D: "/models/products/aether-velocity-shoes.glb",
+    customization: {
+      enabled: true,
+      areas: [
+        {
+          id: "body",
+          name: "Shoe Body & Upper",
+          meshNames: ["ShoeBody", "Upper"],
+          type: "color",
+          defaultOption: "midnight_black",
+          options: [
+            { id: "midnight_black", name: "Midnight Black", value: "#000000", color: "#000000", roughness: 0.4, metalness: 0.1 },
+            { id: "pure_white", name: "Pure White", value: "#ffffff", color: "#ffffff", roughness: 0.3, metalness: 0.1 },
+            { id: "ocean_blue", name: "Ocean Blue", value: "#0000ff", color: "#0000ff", roughness: 0.35, metalness: 0.2 }
+          ]
+        },
+        {
+          id: "laces",
+          name: "Laces",
+          meshNames: ["Laces"],
+          type: "color",
+          defaultOption: "pure_white",
+          options: [
+            { id: "pure_white", name: "Pure White", value: "#ffffff", color: "#ffffff", roughness: 0.8, metalness: 0.0 },
+            { id: "crimson_red", name: "Crimson Red", value: "#ff0000", color: "#ff0000", roughness: 0.7, metalness: 0.0 },
+            { id: "midnight_black", name: "Midnight Black", value: "#000000", color: "#000000", roughness: 0.8, metalness: 0.0 }
+          ]
+        },
+        {
+          id: "sole",
+          name: "Sole & Outsole",
+          meshNames: ["Sole", "Outsole"],
+          type: "color",
+          defaultOption: "pure_white",
+          options: [
+            { id: "pure_white", name: "Pure White", value: "#ffffff", color: "#ffffff", roughness: 0.5, metalness: 0.05 },
+            { id: "crimson_red", name: "Crimson Red", value: "#ff0000", color: "#ff0000", roughness: 0.4, metalness: 0.1 },
+            { id: "neon_volt", name: "Neon Volt", value: "#ccff00", color: "#ccff00", roughness: 0.4, metalness: 0.15 }
+          ]
+        },
+        {
+          id: "material",
+          name: "Upper Material",
+          meshNames: ["ShoeBody", "Upper"],
+          type: "material",
+          defaultOption: "engineered_mesh",
+          options: [
+            { id: "engineered_mesh", name: "Engineered Breathable Mesh", value: "engineered_mesh", roughness: 0.8, metalness: 0.05 },
+            { id: "premium_leather", name: "Premium Italian Leather", value: "premium_leather", roughness: 0.35, metalness: 0.15 }
+          ]
+        }
+      ]
+    },
     colors: ["Phantom Black / Neon", "Cloud White / Silver", "Sunset Gradient"],
     sizes: ["UK 7", "UK 8", "UK 9", "UK 10", "UK 11"],
     specifications: {

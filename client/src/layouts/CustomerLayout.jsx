@@ -8,6 +8,7 @@ import { fetchWishlist } from "../features/wishlist/wishlistSlice.js";
 import Navbar from "../components/layout/Navbar.jsx";
 import Footer from "../components/layout/Footer.jsx";
 import ShoppingAssistant from "../components/ai/ShoppingAssistant.jsx";
+import ComparisonDrawer from "../components/comparison/ComparisonDrawer.jsx";
 
 /**
  * Customer Layout wrapping all customer-facing routes.
@@ -38,6 +39,7 @@ export default function CustomerLayout() {
         <Outlet />
       </main>
       <ShoppingAssistant />
+      <ComparisonDrawer />
       <Footer />
     </div>
   );

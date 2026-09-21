@@ -9,7 +9,12 @@ import {
   selectWishlistItems
 } from "../../features/wishlist/wishlistSlice.js";
 import { addItemToCart } from "../../features/cart/cartSlice.js";
-import { StarIcon, HeartIcon, EyeIcon, CubeIcon } from "../common/Icons.jsx";
+import {
+  addToCompare,
+  removeFromCompare
+} from "../../features/comparison/comparisonSlice.js";
+import { selectIsProductComparing } from "../../features/comparison/comparisonSelectors.js";
+import { StarIcon, HeartIcon, EyeIcon, CubeIcon, CompareIcon } from "../common/Icons.jsx";
 import { formatCurrency, calculateSavings } from "../../utils/formatters.js";
 import { getProductImages, COLOR_SWATCH_MAP } from "../../utils/productImages.js";
 
@@ -61,6 +66,8 @@ export default function ProductCard({ product }) {
     )
   );
 
+  const isComparing = useSelector(selectIsProductComparing(product._id));
+
   // Determine target route
   const productUrl = product.slug ? `/product/${product.slug}` : `/products/${product._id}`;
 
@@ -100,6 +107,16 @@ export default function ProductCard({ product }) {
       dispatch(removeFromWishlist(product._id));
     } else {
       dispatch(addToWishlist(product._id));
+    }
+  };
+
+  const handleCompareToggle = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isComparing) {
+      dispatch(removeFromCompare(product._id));
+    } else {
+      dispatch(addToCompare(product));
     }
   };
 
@@ -204,6 +221,21 @@ export default function ProductCard({ product }) {
           }`}
         >
           <HeartIcon className={`w-3.5 h-3.5 ${isWishlisted ? "fill-rose-500" : ""}`} />
+        </button>
+
+        {/* Compare Toggle Button */}
+        <button
+          type="button"
+          onClick={handleCompareToggle}
+          aria-label={isComparing ? "Remove from comparison" : "Add to comparison"}
+          title={isComparing ? "In comparison (click to remove)" : "Compare product"}
+          className={`absolute top-11 right-2.5 w-7 h-7 rounded-full backdrop-blur-sm transition flex items-center justify-center shadow-xs cursor-pointer ${
+            isComparing
+              ? "bg-neutral-900 text-white border border-neutral-900"
+              : "bg-white/90 text-neutral-400 hover:text-neutral-900 hover:border-neutral-300 border border-neutral-200"
+          }`}
+        >
+          <CompareIcon className="w-3.5 h-3.5" />
         </button>
       </div>
 

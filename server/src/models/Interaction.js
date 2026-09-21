@@ -16,7 +16,7 @@ const interactionSchema = new mongoose.Schema(
       type: String,
       required: [true, "Interaction type is required"],
       enum: {
-        values: ["VIEW", "SEARCH", "WISHLIST", "CART", "PURCHASE", "RATING"],
+        values: ["VIEW", "SEARCH", "WISHLIST", "CART", "PURCHASE", "RATING", "CUSTOMIZATION"],
         message: "{VALUE} is not a valid interaction type"
       }
     },
