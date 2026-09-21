@@ -1265,6 +1265,155 @@ class AiService {
       };
     });
   }
+
+  /**
+   * Generates structured AI Business Insights explaining validated metrics.
+   *
+   * @param {Object} params
+   * @param {string} params.systemPrompt
+   * @param {string} params.userPrompt
+   * @param {Object} params.context - Authoritative metrics context
+   * @returns {Promise<Object>}
+   */
+  async generateBusinessInsights({ systemPrompt, userPrompt, context }) {
+    const activeProvider = (process.env.LLM_PROVIDER || this.provider).toLowerCase();
+    const hasKey = Boolean(process.env.LLM_API_KEY || this.apiKey);
+
+    let rawOutput = "";
+
+    if (activeProvider === "mock" || !hasKey || process.env.NODE_ENV === "test") {
+      return this._generateMockBusinessInsights(context);
+    } else if (activeProvider === "gemini") {
+      rawOutput = await this._callGemini({
+        systemPrompt,
+        conversationHistory: [],
+        userPrompt
+      });
+    } else if (activeProvider === "openai") {
+      rawOutput = await this._callOpenAi({
+        systemPrompt,
+        conversationHistory: [],
+        userPrompt
+      });
+    } else {
+      return this._generateMockBusinessInsights(context);
+    }
+
+    try {
+      const cleanJson = rawOutput.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
+      return JSON.parse(cleanJson);
+    } catch {
+      return this._generateMockBusinessInsights(context);
+    }
+  }
+
+  /**
+   * Deterministic mock generator for AI Business Insights.
+   * Produces strictly grounded observations referencing authoritative metrics.
+   *
+   * @param {Object} context
+   * @returns {Object} Structured insight object
+   */
+  _generateMockBusinessInsights(context = {}) {
+    const rev = context.revenue || { current: 0, previous: 0, growthPercent: 0 };
+    const ord = context.orders || { current: 0, previous: 0, growthPercent: 0, averageOrderValue: 0 };
+    const cust = context.customers || { newCustomers: 0, returningCustomers: 0 };
+    const prods = context.products || { topByRevenue: [], topByOrders: [], lowStock: [], outOfStock: [] };
+    const interactions = context.interactions || { views: 0, cartAdds: 0, wishlistAdds: 0, searches: 0 };
+    const reviews = context.reviews || { averageRating: 0, reviewCount: 0 };
+    const conv = context.conversion || { viewToCartRate: 0, cartToPurchaseRate: 0 };
+
+    const insights = [];
+
+    // 1. Revenue Insight
+    const revDirection = rev.growthPercent >= 0 ? "increased" : "decreased";
+    insights.push({
+      type: "REVENUE",
+      title: `Revenue ${revDirection} by ${Math.abs(rev.growthPercent)}%`,
+      description: `Total revenue ${revDirection} by ${Math.abs(rev.growthPercent)}% to ₹${rev.current.toLocaleString()} during this period compared to ₹${rev.previous.toLocaleString()} in the previous period.`,
+      severity: rev.growthPercent < -15 ? "CRITICAL" : rev.growthPercent < 0 ? "WARNING" : "INFO"
+    });
+
+    // 2. Order Volume Insight
+    const ordDirection = ord.growthPercent >= 0 ? "grew" : "contracted";
+    insights.push({
+      type: "ORDERS",
+      title: `Order volume ${ordDirection} by ${Math.abs(ord.growthPercent)}%`,
+      description: `A total of ${ord.current} orders were placed (vs ${ord.previous} previously), with an average order value of ₹${ord.averageOrderValue.toLocaleString()}.`,
+      severity: ord.growthPercent < -15 ? "WARNING" : "INFO"
+    });
+
+    // 3. Inventory Risks
+    if (prods.outOfStock && prods.outOfStock.length > 0) {
+      const names = prods.outOfStock.map((p) => p.name).join(", ");
+      insights.push({
+        type: "INVENTORY",
+        title: "Out of stock products require restocking",
+        description: `${prods.outOfStock.length} product(s) are currently at zero stock (${names}), preventing order fulfillment.`,
+        severity: "CRITICAL"
+      });
+    } else if (prods.lowStock && prods.lowStock.length > 0) {
+      const names = prods.lowStock.map((p) => `${p.name} (${p.stock} left)`).join(", ");
+      insights.push({
+        type: "INVENTORY",
+        title: "Low stock risks detected",
+        description: `${prods.lowStock.length} product(s) are at or below the 10-unit stock threshold: ${names}.`,
+        severity: "WARNING"
+      });
+    }
+
+    // 4. Product Performance
+    if (prods.topByRevenue && prods.topByRevenue.length > 0) {
+      const topP = prods.topByRevenue[0];
+      insights.push({
+        type: "PRODUCT",
+        title: `Top revenue contributor: ${topP.name}`,
+        description: `${topP.name} generated ₹${topP.revenue.toLocaleString()} across ${topP.unitsSold} units sold during this period.`,
+        severity: "INFO"
+      });
+    }
+
+    // 5. Customer Acquisition
+    if (cust.newCustomers > 0 || cust.returningCustomers > 0) {
+      insights.push({
+        type: "CUSTOMER",
+        title: "Customer acquisition and retention",
+        description: `Acquired ${cust.newCustomers} new customer(s) and recorded ${cust.returningCustomers} repeat purchase customer(s).`,
+        severity: "INFO"
+      });
+    }
+
+    // 6. Interaction & Conversion observation
+    if (interactions.views > 0 || interactions.cartAdds > 0) {
+      insights.push({
+        type: "CONVERSION",
+        title: "Catalog engagement and funnel dynamics",
+        description: `Recorded ${interactions.views} views, ${interactions.cartAdds} cart additions, and ${interactions.searches} search queries, reflecting a ${conv.viewToCartRate}% view-to-cart rate.`,
+        severity: "INFO"
+      });
+    }
+
+    // 7. Review Sentiment
+    if (reviews.reviewCount > 0) {
+      insights.push({
+        type: "REVIEW",
+        title: `Customer satisfaction rating: ${reviews.averageRating} / 5`,
+        description: `Based on ${reviews.reviewCount} verified customer review(s) with ${reviews.positivePercentage || 0}% positive ratings.`,
+        severity: reviews.averageRating < 3.5 ? "WARNING" : "INFO"
+      });
+    }
+
+    const summary = `During the ${context.period || "selected"} period, revenue ${revDirection} by ${Math.abs(rev.growthPercent)}% and order volume ${ordDirection} by ${Math.abs(ord.growthPercent)}%. The platform recorded ${ord.current} total orders, ${interactions.views} product views, and ${cust.newCustomers} new customer registrations.`;
+
+    return {
+      summary,
+      insights,
+      limitations: [
+        "The analysis describes observed trends and correlations and does not establish causation.",
+        "External marketing campaigns, seasonality, and unobserved variables are not factored into this automated interpretation."
+      ]
+    };
+  }
 }
 
 export const aiService = new AiService();

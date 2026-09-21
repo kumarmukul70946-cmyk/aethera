@@ -15,6 +15,8 @@ import recommendationRoutes from "./recommendationRoutes.js";
 import adminProductRoutes from "./adminProductRoutes.js";
 import semanticSearchRoutes from "./semanticSearchRoutes.js";
 import aiRoutes from "./aiRoutes.js";
+import aiInsightRoutes from "./aiInsightRoutes.js";
+import adminAnalyticsRoutes from "./adminAnalyticsRoutes.js";
 
 const apiRouter = Router();
 
@@ -26,6 +28,8 @@ apiRouter.use("/products", productRoutes);
 apiRouter.use("/admin/products", adminProductRoutes);
 apiRouter.use("/search", semanticSearchRoutes);
 apiRouter.use("/ai", aiRoutes);
+apiRouter.use("/admin/ai/insights", aiInsightRoutes);
+apiRouter.use("/admin/analytics", adminAnalyticsRoutes);
 apiRouter.use("/cart", cartRoutes);
 apiRouter.use("/wishlist", wishlistRoutes);
 apiRouter.use("/addresses", addressRoutes);
@@ -38,3 +42,4 @@ apiRouter.use("/interactions", interactionRoutes);
 apiRouter.use("/recommendations", recommendationRoutes);
 
 export default apiRouter;
+

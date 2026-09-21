@@ -178,6 +178,8 @@ export const optionalProtect = async (req, res, next) => {
   }
 };
 
-export default { protect, authorize, optionalProtect };
+export const requireRole = authorize;
+
+export default { protect, authorize, requireRole, optionalProtect };
 
 

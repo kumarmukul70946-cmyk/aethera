@@ -124,10 +124,21 @@ export default function Navbar() {
 
           {/* Right Action Items */}
           <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+            {user?.role === "admin" && (
+              <Link
+                to="/admin"
+                className="hidden sm:flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/80 hover:bg-indigo-100 transition shadow-xs"
+                title="Admin Dashboard"
+              >
+                <span>📊</span>
+                <span>Admin</span>
+              </Link>
+            )}
 
             {/* Compare Link */}
             <Link
               to="/compare"
+
               className="relative flex items-center gap-1.5 py-1.5 px-2 text-neutral-600 hover:text-neutral-900 rounded-lg transition text-xs font-medium"
               title="Compare Products"
             >
@@ -194,6 +205,16 @@ export default function Navbar() {
                       <p className="font-semibold text-neutral-800 truncate">{user.email}</p>
                     </div>
 
+                    {user.role === "admin" && (
+                      <Link
+                        to="/admin"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-1.5 px-3 py-2 text-indigo-600 bg-indigo-50/70 hover:bg-indigo-50 rounded-xl transition font-medium mt-1"
+                      >
+                        <span>📊</span> Admin Dashboard
+                      </Link>
+                    )}
+
                     <Link
                       to="/orders"
                       onClick={() => setUserDropdownOpen(false)}
@@ -201,6 +222,7 @@ export default function Navbar() {
                     >
                       My Orders
                     </Link>
+
 
                     <Link
                       to="/wishlist"

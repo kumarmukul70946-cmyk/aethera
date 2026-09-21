@@ -21,7 +21,9 @@ const OrderDetails = lazy(() => import("./pages/OrderDetails.jsx"));
 const Categories = lazy(() => import("./pages/Categories.jsx"));
 const Deals = lazy(() => import("./pages/Deals.jsx"));
 const CompareProducts = lazy(() => import("./pages/CompareProducts.jsx"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard.jsx"));
 import ProtectedRoute from "./components/common/ProtectedRoute.jsx";
+
 
 // Minimal fallback loader during route transitions
 function RouteLoadingFallback() {
@@ -114,9 +116,18 @@ export default function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute adminOnly={true}>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
 
                 {/* Catch-all redirect to Home */}
                 <Route path="*" element={<Navigate to="/" replace />} />
+
               </Route>
             </Routes>
           </Suspense>

@@ -5,9 +5,10 @@ import { useAuth } from "../../hooks/useAuth.js";
 /**
  * Client-Side Route Protection Component.
  * Redirects unauthenticated users to /login preserving target route in state.
+ * If adminOnly is true, verifies that user.role === 'admin'.
  */
-export default function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
+export default function ProtectedRoute({ children, adminOnly = false }) {
+  const { isAuthenticated, user, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -22,5 +23,10 @@ export default function ProtectedRoute({ children }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  if (adminOnly && user?.role !== "admin") {
+    return <Navigate to="/" replace />;
+  }
+
   return children;
 }
+

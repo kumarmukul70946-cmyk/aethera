@@ -23,6 +23,7 @@
     "test:review-summary": "node test/reviewSummaryTest.js",
     "test:comparison": "node test/productComparisonTest.js",
     "test:ai-customization": "node test/aiCustomizationTest.js",
+    "test:ai-insights": "node test/aiInsightTest.js",
     "embeddings:generate": "node src/scripts/generateEmbeddings.js"
   },
   "dependencies": {

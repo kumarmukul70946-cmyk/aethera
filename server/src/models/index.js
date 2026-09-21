@@ -11,6 +11,7 @@ import Interaction from "./Interaction.js";
 import ReviewHelpful from "./ReviewHelpful.js";
 import ChatSession from "./ChatSession.js";
 import ReviewSummary from "./ReviewSummary.js";
+import AIInsight from "./AIInsight.js";
 
 export {
   User,
@@ -25,6 +26,8 @@ export {
   Coupon,
   Interaction,
   ChatSession,
-  ReviewSummary
+  ReviewSummary,
+  AIInsight
 };
+
 

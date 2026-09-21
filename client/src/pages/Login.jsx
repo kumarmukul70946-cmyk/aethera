@@ -42,6 +42,16 @@ export default function Login() {
     }
   };
 
+  const handleQuickLogin = async (demoEmail, demoPassword) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setCustomError("");
+    const result = await login({ email: demoEmail, password: demoPassword });
+    if (!result.error) {
+      navigate(from, { replace: true });
+    }
+  };
+
   const displayError = customError || error;
 
   return (
@@ -75,6 +85,7 @@ export default function Login() {
           onError={(msg) => setCustomError(msg)}
           disabled={actionLoading}
           mode="signin"
+          onDemoLogin={handleQuickLogin}
         />
 
         {/* Divider */}
@@ -124,11 +135,41 @@ export default function Login() {
           <button
             type="submit"
             disabled={actionLoading}
-            className="w-full py-3.5 px-6 rounded-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed text-white font-semibold text-xs uppercase tracking-widest transition shadow-sm mt-3"
+            className="w-full py-3.5 px-6 rounded-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed text-white font-semibold text-xs uppercase tracking-widest transition shadow-sm mt-3 cursor-pointer"
           >
             {actionLoading ? "Signing in..." : "Sign In"}
           </button>
         </form>
+
+        {/* Quick 1-Click Demo Logins */}
+        <div className="pt-2 border-t border-neutral-100">
+          <div className="bg-[#FAF9F6] border border-neutral-200/70 rounded-2xl p-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                ⚡ 1-Click Demo Accounts
+              </span>
+              <span className="text-[10px] text-neutral-400">No Setup Required</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => handleQuickLogin("customer@aethera.com", "Password123!")}
+                disabled={actionLoading}
+                className="py-2 px-3 rounded-xl bg-white hover:bg-neutral-100 border border-neutral-200 text-xs font-medium text-neutral-800 transition text-center shadow-2xs hover:border-neutral-300 cursor-pointer disabled:opacity-50"
+              >
+                👤 Customer Demo
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickLogin("admin@aethera.com", "AdminPassword123!")}
+                disabled={actionLoading}
+                className="py-2 px-3 rounded-xl bg-white hover:bg-neutral-100 border border-neutral-200 text-xs font-medium text-neutral-800 transition text-center shadow-2xs hover:border-neutral-300 cursor-pointer disabled:opacity-50"
+              >
+                🛡️ Admin Demo
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Footer Link */}
         <p className="text-center text-xs text-neutral-500">

@@ -116,6 +116,23 @@ export const aiCustomizationRateLimiter = rateLimit({
   }
 });
 
+/**
+ * Rate limiter for Admin AI Business Insights.
+ * Prevents rapid regeneration spam and controls LLM API costs.
+ * 60 requests per 15 minutes per IP in production.
+ */
+export const aiInsightRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === "production" ? 60 : 2000,
+  skip: () => process.env.NODE_ENV === "test",
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many AI business insight requests from this IP, please wait a moment."
+  }
+});
+
 export default {
   apiRateLimiter,
   authRateLimiter,
@@ -123,7 +140,9 @@ export default {
   aiRateLimiter,
   aiReviewSummaryRateLimiter,
   aiComparisonRateLimiter,
-  aiCustomizationRateLimiter
+  aiCustomizationRateLimiter,
+  aiInsightRateLimiter
 };
+
 
 
