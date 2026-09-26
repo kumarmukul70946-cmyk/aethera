@@ -206,13 +206,22 @@ export default function Navbar() {
                     </div>
 
                     {user.role === "admin" && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-1.5 px-3 py-2 text-indigo-600 bg-indigo-50/70 hover:bg-indigo-50 rounded-xl transition font-medium mt-1"
-                      >
-                        <span>📊</span> Admin Dashboard
-                      </Link>
+                      <>
+                        <Link
+                          to="/admin"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-1.5 px-3 py-2 text-indigo-600 bg-indigo-50/70 hover:bg-indigo-50 rounded-xl transition font-medium mt-1"
+                        >
+                          <span>📊</span> Admin Dashboard
+                        </Link>
+                        <Link
+                          to="/admin/assets"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-1.5 px-3 py-2 text-purple-600 bg-purple-50/70 hover:bg-purple-50 rounded-xl transition font-medium mt-1"
+                        >
+                          <span>📦</span> Media & 3D Assets
+                        </Link>
+                      </>
                     )}
 
                     <Link

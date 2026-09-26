@@ -14,6 +14,21 @@
     "test:auth": "npm --prefix server run test:auth",
     "test:product": "npm --prefix server run test:product"
   },
+  "type": "module",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.11.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.12.1",
+    "multer": "^2.4.0"
+  },
   "keywords": [
     "ecommerce",
     "threejs",

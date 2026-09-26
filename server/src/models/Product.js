@@ -49,14 +49,23 @@ const productSchema = new mongoose.Schema(
       type: [String],
       default: []
     },
+    // Part 22: Supports either legacy URL string, Asset ObjectId, or populated Asset object
     model3D: {
-      type: String,
+      type: mongoose.Schema.Types.Mixed,
       default: null
     },
+    // Associated media and 3D assets
+    assets: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Asset"
+      }
+    ],
     customization: {
       type: mongoose.Schema.Types.Mixed,
       default: null
     },
+
     colors: {
       type: [String],
       default: []

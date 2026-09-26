@@ -17,6 +17,7 @@ import semanticSearchRoutes from "./semanticSearchRoutes.js";
 import aiRoutes from "./aiRoutes.js";
 import aiInsightRoutes from "./aiInsightRoutes.js";
 import adminAnalyticsRoutes from "./adminAnalyticsRoutes.js";
+import assetRoutes from "./assetRoutes.js";
 
 const apiRouter = Router();
 
@@ -30,6 +31,8 @@ apiRouter.use("/search", semanticSearchRoutes);
 apiRouter.use("/ai", aiRoutes);
 apiRouter.use("/admin/ai/insights", aiInsightRoutes);
 apiRouter.use("/admin/analytics", adminAnalyticsRoutes);
+apiRouter.use("/admin/assets", assetRoutes);
+
 apiRouter.use("/cart", cartRoutes);
 apiRouter.use("/wishlist", wishlistRoutes);
 apiRouter.use("/addresses", addressRoutes);
